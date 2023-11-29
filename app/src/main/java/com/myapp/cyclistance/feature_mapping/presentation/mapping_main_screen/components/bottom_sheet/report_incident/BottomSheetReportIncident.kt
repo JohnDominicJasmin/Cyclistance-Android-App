@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -31,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -53,13 +51,11 @@ import com.myapp.cyclistance.theme.Black500
 import com.myapp.cyclistance.theme.Black900
 import com.myapp.cyclistance.theme.CyclistanceTheme
 import com.myapp.cyclistance.theme.Red900
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun BottomSheetReportIncident(
     modifier: Modifier = Modifier,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
     incidentDescription: TextFieldValue,
     onNewLabel: (label: String) -> Unit,
     markerPostedCount: Int,
@@ -67,10 +63,11 @@ fun BottomSheetReportIncident(
     onChangeDescription: (TextFieldValue) -> Unit,
     addIncidentImage: () -> Unit,
     viewImage: () -> Unit,
-    onClickConfirm: () -> Unit
+    onClickConfirm: () -> Unit,
+    dismissBottomSheet: () -> Unit
 ) {
 
-    val scope = rememberCoroutineScope()
+
     val isDarkTheme = IsDarkTheme.current
     val pagerState = rememberPagerState(pageCount = {
         6
@@ -97,9 +94,7 @@ fun BottomSheetReportIncident(
 
             IconButton(
                 onClick = {
-                    scope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
+                    dismissBottomSheet()
                 }, modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(
@@ -245,7 +240,7 @@ fun PreviewBottomSheetReportIncidentDark() {
                 modifier = Modifier.fillMaxSize()) {
                 BottomSheetReportIncident(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    bottomSheetScaffoldState = bottomSheetScaffoldState,
+
                     onNewLabel = {
 
                     }, onChangeDescription = {},
@@ -254,7 +249,7 @@ fun PreviewBottomSheetReportIncidentDark() {
                     markerPostedCount = 3,
                     addIncidentImage = {},
                     viewImage = {},
-                    uiState = MappingUiState(incidentImageUri = "asd"))
+                    uiState = MappingUiState(incidentImageUri = "asd"), dismissBottomSheet = {})
             }
         }
     }
@@ -276,7 +271,7 @@ fun PreviewBottomSheetReportIncidentLight() {
                 modifier = Modifier.fillMaxSize()) {
                 BottomSheetReportIncident(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    bottomSheetScaffoldState = bottomSheetScaffoldState,
+
                     onNewLabel = {
 
                     },
@@ -286,7 +281,9 @@ fun PreviewBottomSheetReportIncidentLight() {
                     markerPostedCount = 3,
                     addIncidentImage = {},
                     viewImage = {},
-                    uiState = MappingUiState())
+                    uiState = MappingUiState(), dismissBottomSheet = {
+
+                    })
             }
         }
     }

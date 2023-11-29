@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -38,7 +37,6 @@ fun MappingBottomSheet(
 ) {
 
 
-    val scope = rememberCoroutineScope()
 
     val sheetGesturesEnabled = remember(uiState.bottomSheetType) {
         uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&
@@ -80,7 +78,6 @@ fun MappingBottomSheet(
                 BottomSheetType.ReportIncident.type -> {
 
                     BottomSheetReportIncident(
-                        bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         onNewLabel = {
                             event(MappingUiEvent.OnChangeIncidentLabel(it))
@@ -96,6 +93,8 @@ fun MappingBottomSheet(
                             event(MappingUiEvent.AccessPhotoDialog(visibility = true))
                         }, viewImage = {
                             event(MappingUiEvent.ViewImage)
+                        }, dismissBottomSheet = {
+                            event(MappingUiEvent.DismissReportIncidentBottomSheet)
                         })
 
                 }

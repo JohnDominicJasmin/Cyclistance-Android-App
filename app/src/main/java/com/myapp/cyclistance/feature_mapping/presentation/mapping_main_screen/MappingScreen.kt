@@ -1750,6 +1750,10 @@ fun MappingScreen(
                 MappingUiEvent.ViewImageIncidentDetails -> {
                     Timber.v("Currently selected marker is ${uiState.selectedHazardousMarker}")
                 }
+
+                MappingUiEvent.DismissReportIncidentBottomSheet -> {
+                    collapseBottomSheet()
+                }
             }
         }
     )

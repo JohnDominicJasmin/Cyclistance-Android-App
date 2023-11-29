@@ -48,6 +48,7 @@ sealed class MappingUiEvent {
     data object OnConfirmDeleteIncident : MappingUiEvent()
     data object OnClickHazardousInfoGotIt : MappingUiEvent()
     data object DismissIncidentDescriptionBottomSheet : MappingUiEvent()
+    data object DismissReportIncidentBottomSheet : MappingUiEvent()
     data object RescueRequestAccepted : MappingUiEvent()
     data object CancelOnGoingRescue : MappingUiEvent()
     data class  MapTypeBottomSheet(val visibility: Boolean) : MappingUiEvent()
