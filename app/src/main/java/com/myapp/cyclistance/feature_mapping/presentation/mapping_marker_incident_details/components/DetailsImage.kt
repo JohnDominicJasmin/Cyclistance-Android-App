@@ -22,7 +22,7 @@ fun DetailsImage(modifier: Modifier = Modifier, photoBitmap: ImageBitmap) {
         alignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize(),
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.Fit,
 
         )
 

@@ -59,6 +59,7 @@ import com.myapp.cyclistance.core.utils.constants.MappingConstants.SELECTION_RES
 import com.myapp.cyclistance.core.utils.contexts.callPhoneNumber
 import com.myapp.cyclistance.core.utils.contexts.shareLocation
 import com.myapp.cyclistance.core.utils.contexts.startLocationServiceIntentAction
+import com.myapp.cyclistance.core.utils.json.JsonConverter.toJson
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.core.utils.save_images.ImageUtils
 import com.myapp.cyclistance.core.utils.save_images.ImageUtils.toImageUri
@@ -1743,12 +1744,13 @@ fun MappingScreen(
                 MappingUiEvent.SelectImageFromGallery -> openGallery()
                 MappingUiEvent.ViewImage -> {
                     val uri = Uri.encode(uiState.incidentImageUri)
-                    Timber.v("View Image ${uri}")
                     navController.navigateScreen(route = Screens.MappingNavigation.IncidentImage.passArgument(imageUri = uri))
                 }
 
                 MappingUiEvent.ViewImageIncidentDetails -> {
-                    Timber.v("Currently selected marker is ${uiState.selectedHazardousMarker}")
+                    val selectedHazardousMarker = uiState.selectedHazardousMarker
+                    val markerDetails = selectedHazardousMarker?.copy(incidentImageUri = Uri.encode(selectedHazardousMarker.incidentImageUri))
+                    navController.navigateScreen(route = Screens.MappingNavigation.MarkerIncidentDetails.passArgument(markerDetails = markerDetails.toJson()!!))
                 }
 
                 MappingUiEvent.DismissReportIncidentBottomSheet -> {

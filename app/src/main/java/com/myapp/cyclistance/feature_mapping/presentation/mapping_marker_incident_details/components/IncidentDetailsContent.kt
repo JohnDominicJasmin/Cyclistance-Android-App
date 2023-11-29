@@ -35,7 +35,7 @@ fun IncidentDetailsContent(modifier: Modifier = Modifier, marker: HazardousLaneM
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
 
             DetailsImage(
-                modifier = Modifier.alpha(0.6f),
+                modifier = Modifier.alpha(0.8f),
                 photoBitmap = ImageUtils.decodeImage(marker.incidentImageUri).asImageBitmap())
 
             Text(

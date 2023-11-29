@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.myapp.cyclistance.core.utils.JsonConverter.fromJson
 import com.myapp.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
@@ -18,6 +17,7 @@ import com.myapp.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.MARKER_DETAILS_OBJECT
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
+import com.myapp.cyclistance.core.utils.json.JsonConverter.fromJson
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.CancellationReasonScreen
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsScreen

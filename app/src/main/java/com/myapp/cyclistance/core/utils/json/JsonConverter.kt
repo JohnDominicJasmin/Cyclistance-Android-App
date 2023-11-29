@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.core.utils
+package com.myapp.cyclistance.core.utils.json
 
 import com.google.gson.Gson
 
