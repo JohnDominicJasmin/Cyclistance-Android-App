@@ -55,6 +55,7 @@ fun NavGraphBuilder.mappingGraph(
         composable(route = Screens.MappingNavigation.MarkerIncidentDetails.screenRoute,
             arguments = listOf(
                 navArgument(MARKER_DETAILS_OBJECT) {
+                    type = NavType.StringType
                     defaultValue = null
                     nullable = true
                 }
