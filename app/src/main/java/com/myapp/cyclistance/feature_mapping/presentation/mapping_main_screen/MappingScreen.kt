@@ -131,7 +131,7 @@ fun MappingScreen(
         {
             coroutineScope.launch {
                 if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-                    uiState = uiState.copy(bottomSheetType = null).also {
+                    uiState = uiState.copy(bottomSheetType = null, incidentImageUri = null).also {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
                 }
@@ -1237,6 +1237,7 @@ fun MappingScreen(
             collapseBottomSheet()
         })
     }
+
 
     LaunchedEffect(state.user.userAssistance) {
 
