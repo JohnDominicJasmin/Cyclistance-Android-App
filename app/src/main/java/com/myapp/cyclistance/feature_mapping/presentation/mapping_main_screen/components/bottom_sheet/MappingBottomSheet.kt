@@ -23,7 +23,6 @@ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.ev
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -89,9 +88,7 @@ fun MappingBottomSheet(
                             event(MappingUiEvent.OnChangeIncidentDescription(it))
                         }, onClickConfirm = {
                             event(MappingUiEvent.OnReportIncident(uiState.selectedIncidentLabel))
-                            scope.launch {
-                                bottomSheetScaffoldState.bottomSheetState.collapse()
-                            }
+
                         }, incidentDescription = incidentDescription,
                         markerPostedCount = markerPostedCount,
                         uiState = uiState,
