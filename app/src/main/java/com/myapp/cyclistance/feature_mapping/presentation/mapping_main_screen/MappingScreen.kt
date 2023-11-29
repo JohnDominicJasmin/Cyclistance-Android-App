@@ -66,7 +66,7 @@ import com.myapp.cyclistance.feature_authentication.domain.util.findActivity
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent
 import com.myapp.cyclistance.feature_mapping.domain.model.Role
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
@@ -717,12 +717,14 @@ fun MappingScreen(
 
     val onClickReportIncident = remember {
         { incidentLabel: String ->
+            val imageUri = uiState.incidentImageUri
             uiState.lastLongPressedLocation?.let { locationLatLng ->
                 mappingViewModel.onEvent(
                     event = MappingVmEvent.ReportIncident(
                         label = incidentLabel,
                         latLng = locationLatLng,
-                        description = incidentDescription.text
+                        description = incidentDescription.text,
+                        imageUri = imageUri ?: "" // todo: add validation
                     ))
                 uiState = uiState.copy(selectedIncidentLabel = "")
                 incidentDescription = TextFieldValue()
@@ -901,7 +903,7 @@ fun MappingScreen(
     }
 
     val onClickEditIncidentDescription = remember {
-        { marker: HazardousLaneMarker ->
+        { marker: HazardousLaneMarkerDetails ->
             uiState = uiState.copy(currentlyEditingHazardousMarker = marker)
         }
     }
@@ -1089,11 +1091,11 @@ fun MappingScreen(
                             ImageDecoder.decodeBitmap(source)
                         }
                     }
-            }
             val imageUri = if (imageBitmap == null) uri.toString() else ImageUtils.encodeImage(
                 imageBitmap!!)
 
             uiState = uiState.copy(incidentImageUri = imageUri)
+            }
 
         }
 
@@ -1104,7 +1106,9 @@ fun MappingScreen(
             val imageUri = if (imageBitmap == null) uri else ImageUtils.encodeImage(
                 imageBitmap!!)
 
-            uiState = uiState.copy(incidentImageUri = imageUri)
+            imageUri.takeIf { it != "null" && it.isNotEmpty() }?.let{
+                uiState = uiState.copy(incidentImageUri = imageUri)
+            }
 
         }
 
@@ -1723,11 +1727,19 @@ fun MappingScreen(
                 MappingUiEvent.ToggleHazardousMapType -> toggleHazardousMapType()
                 MappingUiEvent.ToggleTrafficMapType -> toggleTrafficMapType()
                 is MappingUiEvent.AccessPhotoDialog -> accessPhotoDialog(event.visibility)
-                MappingUiEvent.DismissCameraPermissionDialog -> onDismissCameraPermissionDialog()
-                MappingUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
+                is MappingUiEvent.CameraPermissionDialog -> cameraPermissionDialogVisibility(event.visibility)
+                is MappingUiEvent.FilesAndMediaPermissionDialog -> filesAndMediaPermissionDialogVisibility(event.visibility)
                 MappingUiEvent.OpenCamera -> openCamera()
                 MappingUiEvent.SelectImageFromGallery -> openGallery()
-                MappingUiEvent.ViewImage -> TODO()
+                MappingUiEvent.ViewImage -> {
+                    val uri = Uri.encode(uiState.incidentImageUri)
+                    Timber.v("View Image ${uri}")
+                    navController.navigateScreen(route = Screens.MappingNavigation.IncidentImage.passArgument(imageUri = uri))
+                }
+
+                MappingUiEvent.ViewImageIncidentDetails -> {
+                    Timber.v("Currently selected marker is ${uiState.selectedHazardousMarker}")
+                }
             }
         }
     )
