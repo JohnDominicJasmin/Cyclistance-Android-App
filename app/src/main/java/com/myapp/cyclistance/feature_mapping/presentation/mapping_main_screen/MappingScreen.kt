@@ -131,7 +131,7 @@ fun MappingScreen(
         {
             coroutineScope.launch {
                 if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-                    uiState = uiState.copy(bottomSheetType = null, incidentImageUri = null).also {
+                    uiState = uiState.copy(bottomSheetType = null, incidentImageUri = null, incidentImageErrorMessage = "").also {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
                 }
@@ -718,16 +718,25 @@ fun MappingScreen(
     val onClickReportIncident = remember {
         { incidentLabel: String ->
             val imageUri = uiState.incidentImageUri
-            uiState.lastLongPressedLocation?.let { locationLatLng ->
-                mappingViewModel.onEvent(
-                    event = MappingVmEvent.ReportIncident(
-                        label = incidentLabel,
-                        latLng = locationLatLng,
-                        description = incidentDescription.text,
-                        imageUri = imageUri ?: "" // todo: add validation
-                    ))
-                uiState = uiState.copy(selectedIncidentLabel = "")
-                incidentDescription = TextFieldValue()
+
+            if(imageUri == null){
+                uiState = uiState.copy(incidentImageErrorMessage = "Please select an image")
+            }else{
+                uiState.lastLongPressedLocation?.let { locationLatLng ->
+                    mappingViewModel.onEvent(
+                        event = MappingVmEvent.ReportIncident(
+                            label = incidentLabel,
+                            latLng = locationLatLng,
+                            description = incidentDescription.text,
+                            imageUri = imageUri
+                        ))
+                    uiState = uiState.copy(selectedIncidentLabel = "")
+                    incidentDescription = TextFieldValue()
+                    coroutineScope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                }
+
             }
         }
     }
