@@ -70,8 +70,12 @@ sealed class Screens {
 
         object SinoTrack: MappingNavigation(screenRoute = "sino_track_screen")
         object Mapping : MappingNavigation(screenRoute = "mapping_screen")
-        object MarkerIncidentDetails: MappingNavigation(screenRoute = "marker_incident_details_screen/{${MARKER_DETAILS_OBJECT}}")
-        object IncidentImage: MappingNavigation(screenRoute = "incident_image_screen/{${INCIDENT_IMAGE_URI}}")
+        object MarkerIncidentDetails: MappingNavigation(screenRoute = "marker_incident_details_screen/{${MARKER_DETAILS_OBJECT}}"){
+            fun passArgument(markerDetails: String) = "marker_incident_details_screen/$markerDetails"
+        }
+        object IncidentImage: MappingNavigation(screenRoute = "incident_image_screen/{${INCIDENT_IMAGE_URI}}"){
+            fun passArgument(imageUri: String) = "incident_image_screen/$imageUri"
+        }
         object Cancellation :
             MappingNavigation(screenRoute = "cancellation_screen" + "/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}") {
             fun passArgument(cancellationType: String, transactionId: String, clientId: String) =
