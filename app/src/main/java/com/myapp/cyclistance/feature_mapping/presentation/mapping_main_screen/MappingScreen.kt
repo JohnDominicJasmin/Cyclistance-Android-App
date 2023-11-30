@@ -1180,6 +1180,17 @@ fun MappingScreen(
     }}
 
 
+    val viewIncidentDetails = remember{{
+        val selectedHazardousMarker = uiState.selectedHazardousMarker
+        val markerDetails = selectedHazardousMarker?.copy(incidentImageUri = Uri.encode(selectedHazardousMarker.incidentImageUri))
+        navController.navigateScreen(route = Screens.MappingNavigation.MarkerIncidentDetails.passArgument(markerDetails = markerDetails.toJson()!!))
+    }}
+
+    val viewIncidentImage = remember{{
+        val uri = Uri.encode(uiState.incidentImageUri)
+        navController.navigateScreen(route = Screens.MappingNavigation.IncidentImage.passArgument(imageUri = uri))
+    }}
+
 
     DisposableEffect(key1 = Unit) {
         val window = context.findActivity()?.window
@@ -1742,20 +1753,12 @@ fun MappingScreen(
                 is MappingUiEvent.FilesAndMediaPermissionDialog -> filesAndMediaPermissionDialogVisibility(event.visibility)
                 MappingUiEvent.OpenCamera -> openCamera()
                 MappingUiEvent.SelectImageFromGallery -> openGallery()
-                MappingUiEvent.ViewImage -> {
-                    val uri = Uri.encode(uiState.incidentImageUri)
-                    navController.navigateScreen(route = Screens.MappingNavigation.IncidentImage.passArgument(imageUri = uri))
-                }
-
-                MappingUiEvent.ViewImageIncidentDetails -> {
-                    val selectedHazardousMarker = uiState.selectedHazardousMarker
-                    val markerDetails = selectedHazardousMarker?.copy(incidentImageUri = Uri.encode(selectedHazardousMarker.incidentImageUri))
-                    navController.navigateScreen(route = Screens.MappingNavigation.MarkerIncidentDetails.passArgument(markerDetails = markerDetails.toJson()!!))
-                }
-
+                MappingUiEvent.ViewImage -> viewIncidentImage()
+                MappingUiEvent.ViewImageIncidentDetails -> viewIncidentDetails()
                 MappingUiEvent.DismissReportIncidentBottomSheet -> {
                     collapseBottomSheet()
                 }
+
             }
         }
     )
