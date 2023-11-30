@@ -108,12 +108,11 @@ fun AddEditContactScreen(
                             ImageDecoder.decodeBitmap(source)
                         }
                     }
+                val imageUri = if (imageBitmap == null) uri.toString() else ImageUtils.encodeImage(
+                    imageBitmap!!)
+
+                uiState = uiState.copy(selectedImageUri = imageUri)
             }
-            val imageUri = if (imageBitmap == null) uri.toString() else ImageUtils.encodeImage(
-                imageBitmap!!)
-
-            uiState = uiState.copy(selectedImageUri = imageUri)
-
         }
 
     val openCameraResultLauncher =
@@ -123,7 +122,9 @@ fun AddEditContactScreen(
             val imageUri = if (imageBitmap == null) uri else ImageUtils.encodeImage(
                 imageBitmap!!)
 
-            uiState = uiState.copy(selectedImageUri = imageUri)
+            imageUri.takeIf { it != "null" && it.isNotEmpty() }?.let{
+                uiState = uiState.copy(selectedImageUri = imageUri)
+            }
 
         }
 

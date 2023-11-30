@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.*
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
+import com.myapp.cyclistance.core.utils.save_images.ImageUtils
 import com.myapp.cyclistance.core.utils.save_images.ImageUtils.toImageUri
 import com.myapp.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.myapp.cyclistance.feature_user_profile.presentation.edit_profile.components.EditProfileScreenContent
@@ -116,7 +117,12 @@ fun EditProfileScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
             val uri = bitmap?.toImageUri().toString()
             imageBitmap = bitmap
-            uiState = uiState.copy(selectedImageUri = uri)
+            val imageUri = if (imageBitmap == null) uri else ImageUtils.encodeImage(
+                imageBitmap!!)
+
+            imageUri.takeIf { it != "null" && it.isNotEmpty() }?.let{
+                uiState = uiState.copy(selectedImageUri = imageUri)
+            }
 
         }
 
