@@ -16,11 +16,7 @@ inline fun MultiplePermissionsState.requestPermission(
         }
 
         !allPermissionsGranted -> {
-            if(!shouldShowRationale){
-                onDenied()
-            }else {
-                launchMultiplePermissionRequest()
-            }
+            launchMultiplePermissionRequest()
         }
 
         shouldShowRationale -> {
@@ -46,11 +42,7 @@ inline fun PermissionState.requestPermission(
             onGranted()
         }
         !status.isGranted -> {
-           if(!status.shouldShowRationale){
-               onDenied()
-           }else{
-               launchPermissionRequest()
-           }
+            launchPermissionRequest()
         }
         status.shouldShowRationale -> {
             onExplain()
