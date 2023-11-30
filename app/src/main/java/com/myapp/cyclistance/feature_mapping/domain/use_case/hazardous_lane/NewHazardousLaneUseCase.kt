@@ -1,15 +1,15 @@
 package com.myapp.cyclistance.feature_mapping.domain.use_case.hazardous_lane
 
 import com.myapp.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.repository.MappingRepository
 
 class NewHazardousLaneUseCase(private val repository: MappingRepository) {
 
 
     suspend operator fun invoke(
-        onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
-        onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onAddedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
+        onModifiedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
         onRemovedHazardousMarker: (markerId: String) -> Unit,
 
         ) {
@@ -20,7 +20,7 @@ class NewHazardousLaneUseCase(private val repository: MappingRepository) {
             onRemovedHazardousMarker = onRemovedHazardousMarker)
     }
 
-    suspend operator fun invoke(hazardousLaneMarker: HazardousLaneMarker) {
+    suspend operator fun invoke(hazardousLaneMarker: HazardousLaneMarkerDetails) {
 
         hazardousLaneMarker.latitude ?: throw MappingExceptions.LocationException(message = "Searching GPS")
         hazardousLaneMarker.longitude ?: throw MappingExceptions.LocationException(message = "Searching GPS")

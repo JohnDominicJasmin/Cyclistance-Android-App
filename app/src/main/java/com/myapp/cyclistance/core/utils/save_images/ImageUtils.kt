@@ -1,6 +1,7 @@
 package com.myapp.cyclistance.core.utils.save_images
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import java.io.ByteArrayOutputStream
@@ -12,7 +13,7 @@ object ImageUtils {
     fun Bitmap.toImageUri(): Uri? {
         val tempFile = File.createTempFile("cyclistance", ".png")
         val bytes = ByteArrayOutputStream()
-        compress(Bitmap.CompressFormat.PNG, 100, bytes)
+        compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val bitmapData = bytes.toByteArray()
 
         val fileOutPut = FileOutputStream(tempFile)
@@ -22,21 +23,30 @@ object ImageUtils {
         return Uri.fromFile(tempFile)
     }
 
+    private const val COMPRESSION_QUALITY = 80
+    private val BITMAP_CONFIG = Bitmap.Config.ARGB_8888
 
-    fun encodeImage(bitmap: Bitmap): String{
-        val previewWidth = 150
-        val previewHeight = bitmap.height * previewWidth / bitmap.width
-        val previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false)
+    fun encodeImage(bitmap: Bitmap): String {
+
         val previewByteArrayOutputStream = ByteArrayOutputStream()
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 100, previewByteArrayOutputStream)
-        val previewByteArray = previewByteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(previewByteArray, Base64.DEFAULT)
+        bitmap.compress(
+            Bitmap.CompressFormat.JPEG,
+            COMPRESSION_QUALITY,
+            previewByteArrayOutputStream)
+        previewByteArrayOutputStream.close() // Close the stream to release resources
+        return Base64.encodeToString(previewByteArrayOutputStream.toByteArray(), Base64.DEFAULT)
+
     }
 
-
-    fun decodeImage(imageString: String): Bitmap{
+    fun decodeImage(imageString: String): Bitmap {
         val decodedString: ByteArray = Base64.decode(imageString, Base64.DEFAULT)
-        return android.graphics.BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+        return BitmapFactory.decodeByteArray(
+            decodedString,
+            0,
+            decodedString.size,
+            BitmapFactory.Options().apply {
+                inPreferredConfig = BITMAP_CONFIG
+            })
     }
 
 }

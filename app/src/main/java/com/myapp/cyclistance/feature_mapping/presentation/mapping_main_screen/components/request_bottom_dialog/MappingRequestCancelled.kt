@@ -34,7 +34,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.myapp.cyclistance.R
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.OutlinedActionButton
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.OutlinedActionButton
 import com.myapp.cyclistance.theme.Black440
 import com.myapp.cyclistance.theme.CyclistanceTheme
 import com.myapp.cyclistance.theme.Red610

@@ -8,14 +8,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:297531421452:android:9599135169f47aa3208f29",
+        "mobilesdk_app_id": "1:297531421452:android:8aa210e66ec31173208f29",
         "android_client_info": {
           "package_name": "com.myapp.cyclistance"
         }
       },
       "oauth_client": [
         {
-          "client_id": "297531421452-50dtc514dtd6outmurhu0cum4bg34ei7.apps.googleusercontent.com",
+          "client_id": "297531421452-a71bid5effdilad3ii3e91djimls1ok0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.myapp.cyclistance",
@@ -23,19 +23,11 @@
           }
         },
         {
-          "client_id": "297531421452-tnk162i437hmsibolfbun4kc1rt1ilof.apps.googleusercontent.com",
+          "client_id": "297531421452-mp0ssk0sod2kt19lm1vj9q03l1sgmr47.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.myapp.cyclistance",
             "certificate_hash": "e1767d9488e5706aef26fb1dc9f35119702c771a"
-          }
-        },
-        {
-          "client_id": "297531421452-vtpdig97redr83u99fjoc91dto3vm0us.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.myapp.cyclistance",
-            "certificate_hash": "7239184e5f13f736b14b170d046d139407ee715c"
           }
         },
         {

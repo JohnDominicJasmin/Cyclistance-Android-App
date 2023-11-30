@@ -102,7 +102,7 @@ fun BottomSheetButtonItem(
             Icon(
                 painter = painterResource(id = iconId),
                 contentDescription = "$buttonText Icon",
-                tint = MaterialTheme.colors.onSurface,
+                tint = MaterialTheme.colors.primary,
                 modifier = Modifier.padding(start = 3.dp, end = 12.dp))
 
             Text(

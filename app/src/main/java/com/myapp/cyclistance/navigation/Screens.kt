@@ -4,8 +4,10 @@ import com.myapp.cyclistance.core.utils.constants.EmergencyCallConstants.EDIT_CO
 import com.myapp.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_ID
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
+import com.myapp.cyclistance.core.utils.constants.NavigationConstants.INCIDENT_IMAGE_URI
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
+import com.myapp.cyclistance.core.utils.constants.NavigationConstants.MARKER_DETAILS_OBJECT
 import com.myapp.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.myapp.cyclistance.core.utils.constants.RescueRecordConstants
 import com.myapp.cyclistance.core.utils.constants.UserProfileConstants
@@ -68,6 +70,12 @@ sealed class Screens {
 
         object SinoTrack: MappingNavigation(screenRoute = "sino_track_screen")
         object Mapping : MappingNavigation(screenRoute = "mapping_screen")
+        object MarkerIncidentDetails: MappingNavigation(screenRoute = "marker_incident_details_screen/{${MARKER_DETAILS_OBJECT}}"){
+            fun passArgument(markerDetails: String) = "marker_incident_details_screen/$markerDetails"
+        }
+        object IncidentImage: MappingNavigation(screenRoute = "incident_image_screen/{${INCIDENT_IMAGE_URI}}"){
+            fun passArgument(imageUri: String) = "incident_image_screen/$imageUri"
+        }
         object Cancellation :
             MappingNavigation(screenRoute = "cancellation_screen" + "/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}") {
             fun passArgument(cancellationType: String, transactionId: String, clientId: String) =

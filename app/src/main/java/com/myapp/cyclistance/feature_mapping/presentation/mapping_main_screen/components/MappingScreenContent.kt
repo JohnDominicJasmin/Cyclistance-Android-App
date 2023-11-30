@@ -35,19 +35,22 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
 import com.myapp.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.myapp.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
+import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
+import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.myapp.cyclistance.feature_authentication.presentation.common.visible
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.MappingBottomSheet
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.CancelRespondButton
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.AccessPhotoDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.BannedAccountDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelOnGoingRescueDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelSearchDialog
@@ -75,7 +78,7 @@ fun MappingScreenContent(
 
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
-    hazardousLaneMarkers: List<HazardousLaneMarker>,
+    hazardousLaneMarkers: List<HazardousLaneMarkerDetails>,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     event: (MappingUiEvent) -> Unit = {},
 ) {
@@ -407,6 +410,36 @@ fun MappingScreenContent(
                         )
                     }
 
+                    if(uiState.filesAndMediaPermissionDialogVisible){
+                        DialogFilesAndMediaPermission(
+                            modifier = Modifier.constrainAs(dialog){
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismiss = {
+                                event(MappingUiEvent.FilesAndMediaPermissionDialog(visibility = false))
+                            }
+                        )
+                    }
+
+                    if(uiState.cameraPermissionDialogVisible){
+                        DialogCameraPermission(
+                            modifier = Modifier.constrainAs(dialog){
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismiss = {
+                                event(MappingUiEvent.CameraPermissionDialog(visibility = false))
+                            }
+                        )
+                    }
+
 
                     if (uiState.notificationPermissionVisible) {
                         DialogNotificationPermission(
@@ -427,6 +460,26 @@ fun MappingScreenContent(
                     }
 
 
+                    if(uiState.accessPhotoDialogVisible){
+                        AccessPhotoDialog(
+                            modifier = Modifier.constrainAs(dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismissRequest = {
+                                event(MappingUiEvent.AccessPhotoDialog(visibility = false))
+                            },
+                            openGallery = {
+                                event(MappingUiEvent.SelectImageFromGallery)
+                            },
+                            takePhoto = {
+                                event(MappingUiEvent.OpenCamera)
+                            }
+                        )
+                    }
 
                     if(uiState.alertDialogState.visible()){
                         AlertDialog(

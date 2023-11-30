@@ -35,7 +35,7 @@ import com.myapp.cyclistance.core.utils.constants.MappingConstants.TRANSACTION_I
 import com.myapp.cyclistance.core.utils.formatter.IconFormatter.getHazardousLaneImage
 import com.myapp.cyclistance.core.utils.formatter.IconFormatter.getNearbyCyclistImage
 import com.myapp.cyclistance.feature_mapping.domain.model.Role
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
@@ -61,7 +61,7 @@ fun MappingMapsScreen(
     state: MappingState,
     uiState: MappingUiState,
     mapboxMap: MapboxMap?,
-    hazardousLaneMarkers: List<HazardousLaneMarker>,
+    hazardousLaneMarkers: List<HazardousLaneMarkerDetails>,
     event: (MappingUiEvent) -> Unit
 //    requestNavigationCameraToOverview: () -> Unit, //todo use this one
 ) {

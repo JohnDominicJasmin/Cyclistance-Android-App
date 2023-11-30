@@ -8,7 +8,7 @@ import java.util.Date
 
 @StableState
 @Parcelize
-data class HazardousLaneMarker(
+data class HazardousLaneMarkerDetails(
     val id: String,
     val idCreator: String,
     val latitude: Double?,
@@ -17,6 +17,7 @@ data class HazardousLaneMarker(
     val datePosted: Date,
     val description: String,
     val address: String,
+    val incidentImageUri: String
 ) : Parcelable {
     @StableState
     constructor() : this(
@@ -28,5 +29,6 @@ data class HazardousLaneMarker(
         datePosted = Date(),
         description = "",
         address = "",
+        incidentImageUri = ""
     )
 }

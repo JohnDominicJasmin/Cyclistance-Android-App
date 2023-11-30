@@ -170,6 +170,22 @@ fun TopAppBar(
                 })
         }
 
+        Screens.MappingNavigation.MarkerIncidentDetails.screenRoute -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                })
+        }
+
+        Screens.MappingNavigation.IncidentImage.screenRoute -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                })
+        }
+
 
     }
 

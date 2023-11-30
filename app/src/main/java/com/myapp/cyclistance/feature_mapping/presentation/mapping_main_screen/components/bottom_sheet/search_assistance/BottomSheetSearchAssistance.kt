@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.search_assistance
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +15,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.myapp.cyclistance.R
 import com.myapp.cyclistance.feature_authentication.presentation.common.AnimatedImage
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.OutlinedActionButton
 import com.myapp.cyclistance.navigation.IsDarkTheme
 import com.myapp.cyclistance.theme.CyclistanceTheme
 

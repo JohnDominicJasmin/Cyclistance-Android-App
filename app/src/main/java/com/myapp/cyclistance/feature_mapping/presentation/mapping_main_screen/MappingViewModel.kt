@@ -18,7 +18,7 @@ import com.myapp.cyclistance.feature_mapping.data.mapper.UserMapper.toRescueRequ
 import com.myapp.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.myapp.cyclistance.feature_mapping.domain.helper.TrackingStateHandler
 import com.myapp.cyclistance.feature_mapping.domain.model.Role
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
@@ -89,8 +89,8 @@ class MappingViewModel @Inject constructor(
     val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()
     private var travelledPath: MutableList<GoogleLatLng> = mutableStateListOf()
 
-    private val _hazardousLaneMarkers = mutableStateListOf<HazardousLaneMarker>()
-    val hazardousLaneMarkers: List<HazardousLaneMarker> = _hazardousLaneMarkers
+    private val _hazardousLaneMarkers = mutableStateListOf<HazardousLaneMarkerDetails>()
+    val hazardousLaneMarkers: List<HazardousLaneMarkerDetails> = _hazardousLaneMarkers
 
     init {
         trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
@@ -202,12 +202,12 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun handleAddedHazardousMarker(marker: HazardousLaneMarker) {
+    private fun handleAddedHazardousMarker(marker: HazardousLaneMarkerDetails) {
         _hazardousLaneMarkers.removeAll { it.id == marker.id }
         _hazardousLaneMarkers.add(marker)
     }
 
-    private fun handleModifiedHazardousMarker(modifiedMarker: HazardousLaneMarker) {
+    private fun handleModifiedHazardousMarker(modifiedMarker: HazardousLaneMarkerDetails) {
         _hazardousLaneMarkers.removeAll { it.id == modifiedMarker.id }
         _hazardousLaneMarkers.add(modifiedMarker)
     }
@@ -534,7 +534,8 @@ class MappingViewModel @Inject constructor(
                 reportHazardousIncident(
                     latLng = event.latLng,
                     label = event.label,
-                    incidentDescription = event.description)
+                    incidentDescription = event.description,
+                    imageUri = event.imageUri)
             }
 
 
@@ -655,7 +656,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun updateReportedIncident(marker: HazardousLaneMarker) {
+    private fun updateReportedIncident(marker: HazardousLaneMarkerDetails) {
         viewModelScope.launch {
             runCatching {
                 mappingUseCase.updateHazardousLaneUseCase(
@@ -698,7 +699,8 @@ class MappingViewModel @Inject constructor(
     private fun reportHazardousIncident(
         latLng: LatLng,
         label: String,
-        incidentDescription: String) {
+        incidentDescription: String,
+        imageUri: String,) {
 
         viewModelScope.launch {
             val userLocation = state.value.getCurrentLocation()
@@ -732,7 +734,8 @@ class MappingViewModel @Inject constructor(
             reportIncident(
                 label = label,
                 latLng = latLng,
-                incidentDescription = incidentDescription)
+                incidentDescription = incidentDescription,
+                imageUri = imageUri)
 
 
         }
@@ -744,13 +747,14 @@ class MappingViewModel @Inject constructor(
     private suspend fun reportIncident(
         label: String,
         latLng: LatLng,
-        incidentDescription: String) {
+        incidentDescription: String,
+        imageUri: String) {
 
 
         coroutineScope {
             runCatching {
                 mappingUseCase.newHazardousLaneUseCase(
-                    hazardousLaneMarker = HazardousLaneMarker(
+                    hazardousLaneMarker = HazardousLaneMarkerDetails(
                         id = getId() + System.currentTimeMillis(),
                         idCreator = getId(),
                         latitude = latLng.latitude,
@@ -758,9 +762,8 @@ class MappingViewModel @Inject constructor(
                         label = label,
                         description = incidentDescription,
                         datePosted = java.util.Date(),
-                        address = ""
-
-                        ))
+                        address = "",
+                        incidentImageUri = imageUri))
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
             }.onFailure {

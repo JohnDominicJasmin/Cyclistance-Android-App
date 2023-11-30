@@ -29,7 +29,7 @@ import com.myapp.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItem
 import com.myapp.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItemDto
 import com.myapp.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.myapp.cyclistance.feature_mapping.domain.model.*
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
@@ -71,8 +71,8 @@ class MappingRepositoryImpl(
     private var hazardousListener: ListenerRegistration? = null
 
     private inline fun hazardousLaneListener(
-        crossinline onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
-        crossinline onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        crossinline onAddedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
+        crossinline onModifiedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
         crossinline onRemovedHazardousMarker: (id: String) -> Unit,
     ) = { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
 
@@ -89,7 +89,7 @@ class MappingRepositoryImpl(
 
             item.document.get(
                 KEY_MARKER_FIELD,
-                HazardousLaneMarker::class.java)?.let { marker ->
+                HazardousLaneMarkerDetails::class.java)?.let { marker ->
 
                 when (item.type) {
                     DocumentChange.Type.ADDED -> onAddedHazardousMarker(marker)
@@ -125,7 +125,7 @@ class MappingRepositoryImpl(
         }
     }
 
-    override suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker) {
+    override suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarkerDetails) {
 
         if (context.hasInternetConnection().not()) {
             throw MappingExceptions.NetworkException()
@@ -155,8 +155,8 @@ class MappingRepositoryImpl(
     }
 
     override suspend fun addHazardousLaneListener(
-        onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
-        onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onAddedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
+        onModifiedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
         onRemovedHazardousMarker: (id: String) -> Unit) {
 
         val currentTimeMillis = System.currentTimeMillis()

@@ -1,10 +1,9 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -12,11 +11,17 @@ import com.myapp.cyclistance.core.utils.constants.MappingConstants
 import com.myapp.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.destination_arrived.BottomSheetReachedDestination
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.destination_arrived.BottomSheetRescueArrived
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description.BottomSheetIncidentDescription
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.map_type.MapTypeBottomSheet
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.on_going_rescue.BottomSheetOnGoingRescue
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident.BottomSheetReportIncident
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.search_assistance.BottomSheetSearchingAssistance
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -32,7 +37,6 @@ fun MappingBottomSheet(
 ) {
 
 
-    val scope = rememberCoroutineScope()
 
     val sheetGesturesEnabled = remember(uiState.bottomSheetType) {
         uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&
@@ -74,20 +78,24 @@ fun MappingBottomSheet(
                 BottomSheetType.ReportIncident.type -> {
 
                     BottomSheetReportIncident(
-                        bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
-                        selectedLabel = uiState.selectedIncidentLabel,
-                        onClick = {
+                        onNewLabel = {
                             event(MappingUiEvent.OnChangeIncidentLabel(it))
                         }, onChangeDescription = {
                             event(MappingUiEvent.OnChangeIncidentDescription(it))
                         }, onClickConfirm = {
                             event(MappingUiEvent.OnReportIncident(uiState.selectedIncidentLabel))
-                            scope.launch {
-                                bottomSheetScaffoldState.bottomSheetState.collapse()
-                            }
+
                         }, incidentDescription = incidentDescription,
-                        markerPostedCount = markerPostedCount)
+                        markerPostedCount = markerPostedCount,
+                        uiState = uiState,
+                        addIncidentImage = {
+                            event(MappingUiEvent.AccessPhotoDialog(visibility = true))
+                        }, viewImage = {
+                            event(MappingUiEvent.ViewImage)
+                        }, dismissBottomSheet = {
+                            event(MappingUiEvent.DismissReportIncidentBottomSheet)
+                        })
 
                 }
 
@@ -156,6 +164,7 @@ fun MappingBottomSheet(
                                     description = description))
                         },
                         onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
+                        viewProofIncident = { event(MappingUiEvent.ViewImageIncidentDetails) },
                     )
 
                 }

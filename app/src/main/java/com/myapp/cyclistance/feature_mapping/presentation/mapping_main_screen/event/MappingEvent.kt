@@ -1,6 +1,6 @@
 package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.myapp.cyclistance.feature_report_account.domain.model.BannedAccountDetails
@@ -40,7 +40,7 @@ sealed class MappingEvent{
     data object ReportIncidentSuccess: MappingEvent()
     data object IncidentDistanceTooFar: MappingEvent()
     data class ReportIncidentFailed(val reason: String): MappingEvent()
-    data class SelectHazardousLaneMarker(val marker: HazardousLaneMarker): MappingEvent()
+    data class SelectHazardousLaneMarker(val marker: HazardousLaneMarkerDetails): MappingEvent()
     data object UpdateIncidentSuccess: MappingEvent()
     data class UpdateIncidentFailed(val reason: String): MappingEvent()
 
