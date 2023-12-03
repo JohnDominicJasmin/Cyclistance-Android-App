@@ -1,9 +1,0 @@
-<changelist name="Prepare_for_release" date="1701002911050" recycled="false" deleted="true">
-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Prepare_for_release/shelved.patch" />
-  <option name="DESCRIPTION" value="Prepare for release" />
-  <binary>
-    <option name="BEFORE_PATH" value="app/release/app-release.aab" />
-    <option name="AFTER_PATH" />
-    <option name="SHELVED_PATH" />
-  </binary>
-</changelist>
