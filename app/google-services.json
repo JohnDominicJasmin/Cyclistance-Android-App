@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "297531421452-epam0b13ndv6nc11o4ei70lq06pe3s0v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myapp.cyclistance",
+            "certificate_hash": "c6c40096db2f507915e1d6d0f72196ce0e53ca71"
+          }
+        },
+        {
           "client_id": "297531421452-mp0ssk0sod2kt19lm1vj9q03l1sgmr47.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
