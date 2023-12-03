@@ -18,6 +18,6 @@
     <string name="accountAlreadyInUse">This account is Already in Use.</string>
     <string name="somethingWentWrong">Sorry, something went wrong. Please try again.</string>
     <string name="failed_create_user">Failed to Create User</string>
-    <string name="privacy_policy_url">https://doc-hosting.flycricket.io/cyclistance-app-privacy-policy/3412984a-539a-4058-b5d8-58fcc3f82dd1/privacy</string>
-    <string name="terms_and_condition_url">https://doc-hosting.flycricket.io/cyclistance-app-terms-of-use/9f3cd4ae-0d5d-43fc-a2e9-3720104a6149/terms</string>
+    <string name="privacy_policy_url">https://johndominicjasmin.github.io/cyclistance-privacy-policy/</string>
+    <string name="terms_and_condition_url">https://johndominicjasmin.github.io/cyclistance-terms-and-condition/</string>
 </resources>
