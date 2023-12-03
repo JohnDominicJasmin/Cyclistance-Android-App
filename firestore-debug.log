@@ -9,3 +9,51 @@ Dev App Server is now running.
 
 Nov 30, 2023 11:05:32 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:26:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:26:23 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+Dec 01, 2023 2:27:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:27:35 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+Dec 01, 2023 2:29:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:29:06 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+Dec 01, 2023 2:31:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:31:41 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+Dec 01, 2023 2:31:41 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+Dec 01, 2023 2:33:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:33:12 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+Dec 01, 2023 2:52:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:55:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:55:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:56:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 2:58:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:02:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:03:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:05:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:06:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:09:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:11:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Dec 01, 2023 3:12:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
