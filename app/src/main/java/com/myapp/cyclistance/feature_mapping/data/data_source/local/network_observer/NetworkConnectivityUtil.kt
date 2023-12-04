@@ -27,4 +27,16 @@ class NetworkConnectivityUtil(val context: Context)  {
             return hasInternetConnection()
         }
     }
+
+
+    companion object {
+        fun ConnectivityObserver.Status.toInternetStatusToText():String{
+            return when(this){
+                ConnectivityObserver.Status.Available -> "Connected"
+                ConnectivityObserver.Status.Unavailable, ConnectivityObserver.Status.Lost -> "No Connection"
+                ConnectivityObserver.Status.Losing -> "Connecting..."
+            }
+        }
+
+    }
 }

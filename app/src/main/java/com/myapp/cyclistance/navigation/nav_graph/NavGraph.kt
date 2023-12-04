@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.ConnectivityObserver
 import com.myapp.cyclistance.navigation.event.NavUiEvent
 import com.myapp.cyclistance.navigation.state.NavUiState
 
@@ -45,7 +46,7 @@ fun NavGraph(
         mappingGraph(
             navController = navController,
             paddingValues = paddingValues,
-            hasInternetConnection = uiState.internetAvailable,
+            hasInternetConnection = uiState.internetStatus == ConnectivityObserver.Status.Available,
             isNavigating = uiState.isNavigating,
             onChangeNavigatingState = { event(NavUiEvent.OnChangeNavigation(it)) }
         )
@@ -58,7 +59,7 @@ fun NavGraph(
         messagingGraph(
             navController = navController,
             paddingValues = paddingValues,
-            isInternetAvailable = uiState.internetAvailable,
+            isInternetAvailable = uiState.internetStatus == ConnectivityObserver.Status.Available,
         )
 
         onBoardingGraph(

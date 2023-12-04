@@ -13,6 +13,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,16 +23,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.myapp.cyclistance.core.utils.composable_utils.ComposableLifecycle
-import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityChecker
+import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.ConnectivityObserver
+import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityObserver
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.NavigationDrawerContent
 import com.myapp.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
 import com.myapp.cyclistance.feature_settings.presentation.setting_screen.event.SettingEvent
@@ -75,8 +74,7 @@ fun NavScreen(
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
     val editProfileState by editProfileViewModel.state.collectAsStateWithLifecycle()
     val navState by navViewModel.state.collectAsStateWithLifecycle()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
+    val connectivityObserver = NetworkConnectivityObserver(context.applicationContext)
     val onChangeNavigatingState = remember {
         { navigating: Boolean ->
             navUiState = navUiState.copy(
@@ -85,6 +83,10 @@ fun NavScreen(
         }
     }
 
+    val status by connectivityObserver.observe().collectAsState(
+        initial = ConnectivityObserver.Status.Unavailable
+    )
+
 
     BackHandler(enabled = scaffoldState.drawerState.isOpen, onBack = {
         coroutineScope.launch {
@@ -92,23 +94,9 @@ fun NavScreen(
         }
     })
 
-    ComposableLifecycle { _, event ->
-        when (event) {
-            Lifecycle.Event.ON_CREATE -> {
-                NetworkConnectivityChecker.observe(lifecycleOwner) { isConnected ->
-                    isConnected?.let {
-                        navUiState = navUiState.copy(internetAvailable = isConnected)
-                    }
-                }
-            }
 
-            Lifecycle.Event.ON_RESUME -> {
-                NetworkConnectivityChecker.checkForConnection()
-            }
-
-            else -> {}
-        }
-
+    LaunchedEffect(key1 = status){
+         navUiState = navUiState.copy(internetStatus = status)
     }
 
     LaunchedEffect(true) {
@@ -269,8 +257,8 @@ fun NavScreen(
                                     uiState = navUiState)
 
                                 NoInternetStatusBar(
-                                    navUiState.internetAvailable,
-                                    navBackStackEntry?.destination?.route)
+                                    internetStatus = status,
+                                    route = navBackStackEntry?.destination?.route)
 
                             }
                         }
