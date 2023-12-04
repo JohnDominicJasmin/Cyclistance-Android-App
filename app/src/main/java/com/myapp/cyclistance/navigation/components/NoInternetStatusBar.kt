@@ -13,13 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.ConnectivityObserver
+import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityUtil.Companion.toInternetStatusToText
 import com.myapp.cyclistance.navigation.Screens
 import com.myapp.cyclistance.theme.Black900
 import com.myapp.cyclistance.theme.CyclistanceTheme
 import com.myapp.cyclistance.theme.White900
 
 @Composable
-fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
+fun NoInternetStatusBar(internetStatus: ConnectivityObserver.Status, route: String?) {
 
     val inShowableScreens = remember(route) {
         val nonShowableScreens = listOf(
@@ -32,6 +34,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
         route !in nonShowableScreens
     }
 
+    val internetAvailable = internetStatus == ConnectivityObserver.Status.Available
 
     if (internetAvailable.not() && inShowableScreens) {
         Box(
@@ -41,7 +44,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
                 .fillMaxWidth()){
 
             Text(
-                text = "No Connection",
+                text = internetStatus.toInternetStatusToText(),
                 color = White900,
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier.padding(vertical = 1.5.dp))
@@ -56,7 +59,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 fun PreviewNoInternetStatusBarDark() {
     CyclistanceTheme(darkTheme = true) {
         Surface {
-            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingNavigation.ROUTE)
+//            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingNavigation.ROUTE)
         }
     }
 }
@@ -66,7 +69,7 @@ fun PreviewNoInternetStatusBarDark() {
 fun PreviewNoInternetStatusBarLight() {
     CyclistanceTheme(darkTheme = false) {
         Surface {
-            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingNavigation.ROUTE)
+//            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingNavigation.ROUTE)
         }
     }
 }
