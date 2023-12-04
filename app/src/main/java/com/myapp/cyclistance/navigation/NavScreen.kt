@@ -197,8 +197,13 @@ fun NavScreen(
 
     val onClickRideHistory = remember {
         {
-            closeDrawer()
-            navController.navigateScreen(Screens.RescueRecordNavigation.RideHistory.passArgument(rideHistoryUid = editProfileState.userId))
+            if(editProfileState.userId.isEmpty()){
+                Toast.makeText(context, "Ride History not available", Toast.LENGTH_SHORT).show()
+            }else{
+                closeDrawer()
+                navController.navigateScreen(Screens.RescueRecordNavigation.RideHistory.passArgument(rideHistoryUid = editProfileState.userId))
+            }
+
         }
     }
 
@@ -219,18 +224,21 @@ fun NavScreen(
 
     val onClickMenuIcon = remember {
         {
+            closeDrawer()
             editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
-            coroutineScope.launch {
-                scaffoldState.drawerState.open()
-            }
+
             Unit
         }
     }
 
 
     val openUserProfile = remember(editProfileState.userId){{
-        closeDrawer()
-        navController.navigate(Screens.UserProfileNavigation.UserProfile.passArgument(userId = editProfileState.userId))
+        if(editProfileState.userId.isEmpty()){
+            Toast.makeText(context, "User Profile not available", Toast.LENGTH_SHORT).show()
+        }else{
+            closeDrawer()
+            navController.navigate(Screens.UserProfileNavigation.UserProfile.passArgument(userId = editProfileState.userId))
+        }
     }}
 
 
