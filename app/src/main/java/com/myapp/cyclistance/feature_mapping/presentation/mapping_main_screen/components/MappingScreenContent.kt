@@ -40,6 +40,7 @@ import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.Dialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
+import com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.myapp.cyclistance.feature_authentication.presentation.common.visible
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
@@ -56,6 +57,8 @@ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.co
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelSearchDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DeleteHazardousLaneMarkerDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DiscardHazardousLaneMarkerDialog
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.incident_description.IncidentDescriptionDialog
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.report_incident.ReportIncidentDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.ExpandableFABSection
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request_bottom_dialog.MappingRequestAccepted
@@ -75,7 +78,6 @@ fun MappingScreenContent(
     state: MappingState,
     emergencyState: EmergencyCallState,
     mapboxMap: MapboxMap?,
-
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
     hazardousLaneMarkers: List<HazardousLaneMarkerDetails>,
@@ -146,12 +148,10 @@ fun MappingScreenContent(
                 event = event,
                 bottomSheetScaffoldState = bottomSheetScaffoldState,
                 uiState = uiState,
-                incidentDescription = incidentDescription,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)
-                    .align(Alignment.BottomCenter),
-                markerPostedCount = markerPostedCount) {
+                    .align(Alignment.BottomCenter)) {
 
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -287,6 +287,46 @@ fun MappingScreenContent(
                             })
                     }
 
+                    if(uiState.reportIncidentDialogVisible){
+                        ReportIncidentDialog(
+                            incidentDescription = incidentDescription,
+                            onNewLabel = {
+                                event(MappingUiEvent.OnChangeIncidentLabel(it))
+                            },
+                            markerPostedCount = markerPostedCount,
+                            uiState = uiState,
+                            onChangeDescription = {
+                                event(MappingUiEvent.OnChangeIncidentDescription(it))
+                            },
+                            addIncidentImage = {  event(MappingUiEvent.AccessPhotoDialog(visibility = true)) },
+                            viewImage = {  event(MappingUiEvent.ViewImage) },
+                            onClickConfirm = {
+                                event(MappingUiEvent.OnReportIncident(uiState.selectedIncidentLabel))
+                            }, onDismissRequest = {
+                                event(MappingUiEvent.ReportIncidentDialog(visibility = false))
+                            })
+                    }
+
+
+                    if(uiState.incidentDescriptionDialogVisible){
+                        IncidentDescriptionDialog(
+                            uiState = uiState,
+                            state = state,
+                            icon  = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
+                            onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },
+                            onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
+                            viewProofIncident = { event(MappingUiEvent.ViewImageIncidentDetails) },
+                            onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription)  },
+                            onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
+                            onDismissRequest = {
+                                event(MappingUiEvent.IncidentDescriptionDialog(visibility = false))
+                            },
+                            onClickConfirmButton = { description, label ->
+                                event(
+                                    MappingUiEvent.UpdateIncidentDescription(
+                                        label = label,
+                                        description = description))})
+                    }
 
                     if (uiState.cancelSearchDialogVisible) {
                         CancelSearchDialog(onDismissRequest = {
