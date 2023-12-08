@@ -304,6 +304,8 @@ fun MappingScreenContent(
                                 event(MappingUiEvent.OnReportIncident(uiState.selectedIncidentLabel))
                             }, onDismissRequest = {
                                 event(MappingUiEvent.ReportIncidentDialog(visibility = false))
+                                event(MappingUiEvent.RemoveIncidentImage)
+
                             })
                     }
 
@@ -320,6 +322,7 @@ fun MappingScreenContent(
                             onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
                             onDismissRequest = {
                                 event(MappingUiEvent.IncidentDescriptionDialog(visibility = false))
+                                event(MappingUiEvent.RemoveIncidentImage)
                             },
                             onClickConfirmButton = { description, label ->
                                 event(

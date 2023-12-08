@@ -51,6 +51,7 @@ sealed class MappingUiEvent {
 
     data object RescueRequestAccepted : MappingUiEvent()
     data object CancelOnGoingRescue : MappingUiEvent()
+    data object RemoveIncidentImage : MappingUiEvent()
     data class  MapTypeBottomSheet(val visibility: Boolean) : MappingUiEvent()
 
     // Events with Parameters

@@ -132,7 +132,7 @@ fun MappingScreen(
         {
             coroutineScope.launch {
                 if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-                    uiState = uiState.copy(bottomSheetType = null, incidentImageUri = null, incidentImageErrorMessage = "").also {
+                    uiState = uiState.copy(bottomSheetType = null, incidentImageErrorMessage = "").also {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
                 }
@@ -1195,13 +1195,20 @@ fun MappingScreen(
 
     val reportIncidentDialog = remember{{ visibility: Boolean ->
         uiState = uiState.copy(
-            reportIncidentDialogVisible = visibility
+            reportIncidentDialogVisible = visibility,
         )
     }}
 
     val incidentDescriptionDialog = remember{{ visibility: Boolean ->
         uiState = uiState.copy(
-            incidentDescriptionDialogVisible = visibility
+            incidentDescriptionDialogVisible = visibility,
+
+        )
+    }}
+
+    val removeIncidentImage = remember{{
+        uiState = uiState.copy(
+            incidentImageUri = null
         )
     }}
 
@@ -1513,6 +1520,7 @@ fun MappingScreen(
 
                 MappingEvent.ReportIncidentSuccess -> {
                     Toast.makeText(context, "Incident Reported", Toast.LENGTH_SHORT).show()
+                    reportIncidentDialog(false)
                 }
 
                 is MappingEvent.IncidentDistanceTooFar -> {
@@ -1769,6 +1777,7 @@ fun MappingScreen(
                 MappingUiEvent.ViewImageIncidentDetails -> viewIncidentDetails()
                 is MappingUiEvent.IncidentDescriptionDialog -> incidentDescriptionDialog(event.visibility)
                 is MappingUiEvent.ReportIncidentDialog -> reportIncidentDialog(event.visibility)
+                MappingUiEvent.RemoveIncidentImage -> removeIncidentImage()
             }
         }
     )
