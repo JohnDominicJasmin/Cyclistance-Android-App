@@ -8,7 +8,7 @@ import com.myapp.cyclistance.feature_mapping.domain.use_case.hazardous_lane.NewH
 import com.myapp.cyclistance.feature_mapping.domain.use_case.hazardous_lane.RemoveHazardousListenerUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.hazardous_lane.ShouldHazardousStartingInfoUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.hazardous_lane.UpdateHazardousLaneUseCase
-import com.myapp.cyclistance.feature_mapping.domain.use_case.intent_action.IntentActionUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.intent_action.NotificationIntentUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
@@ -21,6 +21,7 @@ import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.RemoveUserTransactionUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.RescueFinishUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.user.AddRescueRespondentUseCase
@@ -54,6 +55,7 @@ data class MappingUseCase(
     val deleteRescueTransactionUseCase: DeleteRescueTransactionUseCase,
     val confirmCancellationUseCase: ConfirmCancellationUseCase,
     val rescueFinishUseCase: RescueFinishUseCase,
+    val removeUserTransactionUseCase: RemoveUserTransactionUseCase,
 
     val getUserLocationUseCase: GetUserLocationUseCase,
     val getFullAddressUseCase: GetFullAddressUseCase,

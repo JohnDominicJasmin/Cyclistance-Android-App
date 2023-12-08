@@ -16,7 +16,8 @@ interface CyclistanceApi {
     @DELETE("/api/v1/delete-user/{user_id}")
     suspend fun deleteUser(@Path("user_id") itemId: String)
 
-
+    @PUT("/app/v1/remove-user-transaction/{id}")
+    suspend fun removeUserTransaction(@Path("id") id: String)
 
 
 

@@ -805,9 +805,7 @@ class MappingViewModel @Inject constructor(
 
 
     private suspend fun removeUserTransaction(id: String) {
-        mappingUseCase.createUserUseCase(
-            user = UserItem.removeUserTransaction(id)
-        )
+        mappingUseCase.removeUserTransactionUseCase(id = id)
     }
 
 
