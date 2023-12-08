@@ -138,6 +138,9 @@ object MappingDataSourceModule {
         return lazy {
             OkHttpClient.Builder()
                 .cache(cache)
+                .connectTimeout(8, TimeUnit.SECONDS)
+                .writeTimeout(8, TimeUnit.SECONDS)
+                .readTimeout(8, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build()
         }.value
