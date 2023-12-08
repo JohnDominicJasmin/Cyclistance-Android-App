@@ -82,5 +82,5 @@ data class MappingUseCase(
 
     val newRescueRequestNotificationUseCase: NewRescueRequestNotificationUseCase,
     val requestAcceptedNotificationUseCase: RequestAcceptedNotificationUseCase,
-    val intentActionUseCase: IntentActionUseCase
+    val notificationIntentUseCase: NotificationIntentUseCase
     )
