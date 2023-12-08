@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.report_incident
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

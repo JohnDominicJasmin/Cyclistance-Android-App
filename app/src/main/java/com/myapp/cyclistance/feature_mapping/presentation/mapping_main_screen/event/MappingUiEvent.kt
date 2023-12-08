@@ -48,9 +48,10 @@ sealed class MappingUiEvent {
     data object OnConfirmDeleteIncident : MappingUiEvent()
     data object OnClickHazardousInfoGotIt : MappingUiEvent()
     data object DismissIncidentDescriptionBottomSheet : MappingUiEvent()
-    data object DismissReportIncidentBottomSheet : MappingUiEvent()
+
     data object RescueRequestAccepted : MappingUiEvent()
     data object CancelOnGoingRescue : MappingUiEvent()
+    data object RemoveIncidentImage : MappingUiEvent()
     data class  MapTypeBottomSheet(val visibility: Boolean) : MappingUiEvent()
 
     // Events with Parameters
@@ -71,6 +72,8 @@ sealed class MappingUiEvent {
     data class RescueRequestDialog(val visibility: Boolean) : MappingUiEvent()
     data class AlertDialog(val alertDialogState: AlertDialogState = AlertDialogState()): MappingUiEvent()
     data class NotificationPermissionDialog(val visibility: Boolean) : MappingUiEvent()
+    data class ReportIncidentDialog(val visibility: Boolean): MappingUiEvent()
+    data class IncidentDescriptionDialog(val visibility: Boolean): MappingUiEvent()
     data class OnInitializeMap(val mapboxMap: MapboxMap) : MappingUiEvent()
     data class OnMapLongClick(val latLng: LatLng) : MappingUiEvent()
     data class OnReportIncident(val labelIncident: String) : MappingUiEvent()

@@ -1,6 +1,7 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.incident_description
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,8 +9,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -17,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import com.myapp.cyclistance.R
 import com.myapp.cyclistance.core.utils.constants.MappingConstants.CONSTRUCTION
@@ -33,7 +39,7 @@ import com.myapp.cyclistance.theme.CyclistanceTheme
 import java.util.Date
 
 @Composable
-fun BottomSheetIncidentDescription(
+fun IncidentDescriptionDialog(
     modifier: Modifier = Modifier,
     uiState: MappingUiState,
     state: MappingState,
@@ -42,81 +48,91 @@ fun BottomSheetIncidentDescription(
     onClickDelete: () -> Unit,
     viewProofIncident: () -> Unit,
     onClickCancelButton: () -> Unit,
-    onDismissBottomSheet: () -> Unit,
     onClickGotItButton: () -> Unit,
+    onDismissRequest: () -> Unit,
     onClickConfirmButton: (description: String, label: String) -> Unit
-
 ) {
 
 
     val isDarkTheme = IsDarkTheme.current
+    val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
 
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .shadow(
-                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-                elevation = 8.dp),
-        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-    ) {
+    if (isDialogOpen) {
 
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()) {
-
-
-            IconButton(
-                onClick = onDismissBottomSheet, modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .zIndex(100f)
+        Dialog(
+            onDismissRequest = {
+                onDismissRequest()
+                onDialogVisibilityToggle(false)
+            }, properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true)) {
+            Card(
+                modifier = modifier
+                    .fillMaxWidth(0.93f)
+                    .shadow(
+                        shape = RoundedCornerShape(size = 12.dp),
+                        elevation = 8.dp),
+                shape = RoundedCornerShape(size = 12.dp)
             ) {
 
-                Icon(
-                    painter = painterResource(id = if (isDarkTheme) R.drawable.ic_close_darktheme else R.drawable.ic_close_lighttheme),
-                    contentDescription = "Close",
-                    tint = Color.Unspecified
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()) {
 
+
+                    IconButton(
+                        onClick = onDismissRequest, modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .zIndex(100f)
+                    ) {
+
+                        Icon(
+                            painter = painterResource(id = if (isDarkTheme) R.drawable.ic_close_darktheme else R.drawable.ic_close_lighttheme),
+                            contentDescription = "Close",
+                            tint = Color.Unspecified
+                        )
+
+                    }
+
+                    if (state.shouldShowHazardousStartingInfo) {
+
+                        HazardousStartingInfo(
+                            onClickGotItButton = onClickGotItButton,
+                        )
+                        return@Card
+                    }
+
+                    if (uiState.currentlyEditingHazardousMarker != null) {
+
+                        val editingMarker = uiState.currentlyEditingHazardousMarker
+                        IncidentDescriptionEditMode(
+                            modifier = Modifier,
+                            markerLabel = editingMarker.label,
+                            markerDescription = editingMarker.description,
+                            onClickCancelButton = onClickCancelButton,
+                            onClickConfirmButton = onClickConfirmButton
+                        )
+                        return@Card
+                    }
+
+                    IncidentDescriptionSection(
+                        onDismissBottomSheet = onDismissRequest,
+                        icon = icon,
+                        uiState = uiState,
+                        state = state,
+                        marker = uiState.selectedHazardousMarker!!,
+                        onClickEdit = onClickEdit,
+                        onClickDelete = onClickDelete,
+                        viewProofIncident = viewProofIncident
+                    )
+
+                }
             }
-
-            if (state.shouldShowHazardousStartingInfo) {
-
-                HazardousStartingInfo(
-                    onClickGotItButton = onClickGotItButton,
-                )
-                return@Card
-            }
-
-            if (uiState.currentlyEditingHazardousMarker != null) {
-
-                val editingMarker = uiState.currentlyEditingHazardousMarker
-                IncidentDescriptionEditMode(
-                    modifier = Modifier,
-                    markerLabel = editingMarker.label,
-                    markerDescription = editingMarker.description,
-                    onClickCancelButton = onClickCancelButton,
-                    onClickConfirmButton = onClickConfirmButton
-                )
-                return@Card
-            }
-
-            IncidentDescriptionSection(
-                onDismissBottomSheet = onDismissBottomSheet,
-                icon = icon,
-                uiState = uiState,
-                state = state,
-                marker = uiState.selectedHazardousMarker!!,
-                onClickEdit = onClickEdit,
-                onClickDelete = onClickDelete,
-                viewProofIncident = viewProofIncident
-            )
-
         }
     }
 }
-
 
 
 
@@ -144,15 +160,16 @@ fun PreviewHazardousStartingInfo() {
 
 @Preview(device = "id:Galaxy Nexus")
 @Composable
-fun PreviewBottomSheetIncidentDescriptionDark() {
+fun PreviewDialogIncidentDescriptionDark() {
 
     val isDarkTheme = false
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
 
 
-            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
-                BottomSheetIncidentDescription(
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+
+                IncidentDescriptionDialog(
 
                     uiState = MappingUiState(
                         currentlyEditingHazardousMarker = HazardousLaneMarkerDetails(
@@ -175,7 +192,7 @@ fun PreviewBottomSheetIncidentDescriptionDark() {
                         shouldShowHazardousStartingInfo = true),
                     onClickDelete = {},
                     onClickEdit = {},
-                    onDismissBottomSheet = {},
+                    onDismissRequest = {},
                     onClickCancelButton = {}, onClickGotItButton = {},
                     onClickConfirmButton = { _, _ -> },
                     viewProofIncident = {
@@ -188,15 +205,15 @@ fun PreviewBottomSheetIncidentDescriptionDark() {
 
 @Preview(device = "id:Galaxy Nexus")
 @Composable
-fun PreviewBottomSheetIncidentDescriptionLight() {
+fun PreviewDialogIncidentDescriptionLight() {
 
     val isDarkTheme = false
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
 
 
-            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
-                BottomSheetIncidentDescription(
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colors.background)) {
+                IncidentDescriptionDialog(
 
                     uiState = MappingUiState(
                         currentlyEditingHazardousMarker = HazardousLaneMarkerDetails(
@@ -225,7 +242,7 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                     state = MappingState(userId = "1o3jjt90qin3f39n23"),
                     onClickDelete = {},
                     onClickEdit = {},
-                    onDismissBottomSheet = {},
+                    onDismissRequest = {},
                     onClickCancelButton = {},
                     onClickGotItButton = {},
                     onClickConfirmButton = { _, _ -> },
@@ -242,7 +259,7 @@ fun PreviewIncidentDescriptionEditMode() {
 
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
-            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 IncidentDescriptionEditMode(
                     onClickCancelButton = { /*TODO*/ },
                     onClickConfirmButton = { description, label -> },
