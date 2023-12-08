@@ -630,15 +630,16 @@ fun MappingScreen(
     val onMapClick = remember {
         {
 
-            if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {
-                collapseBottomSheet()
+            if (uiState.reportIncidentDialogVisible) {
+                 uiState = uiState.copy(reportIncidentDialogVisible = false)
             }
 
-            if (uiState.bottomSheetType == BottomSheetType.IncidentDescription.type) {
+            if (uiState.incidentDescriptionDialogVisible) {
                 checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
-                    collapseBottomSheet()
+                    uiState = uiState.copy(incidentDescriptionDialogVisible = false)
                 })
             }
+
             onDismissRescueeBanner()
             expandableFab(false)
 
@@ -656,9 +657,7 @@ fun MappingScreen(
                 expandableFab(false)
                 uiState = uiState.copy(
                     lastLongPressedLocation = latLng,
-                    bottomSheetType = BottomSheetType.ReportIncident.type).also {
-                    expandBottomSheet()
-                }
+                    reportIncidentDialogVisible = true)
             })
 
         }
@@ -1194,6 +1193,18 @@ fun MappingScreen(
         navController.navigateScreen(route = Screens.MappingNavigation.IncidentImage.passArgument(imageUri = uri))
     }}
 
+    val reportIncidentDialog = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(
+            reportIncidentDialogVisible = visibility
+        )
+    }}
+
+    val incidentDescriptionDialog = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(
+            incidentDescriptionDialogVisible = visibility
+        )
+    }}
+
 
     DisposableEffect(key1 = Unit) {
         val window = context.findActivity()?.window
@@ -1517,9 +1528,7 @@ fun MappingScreen(
                 is MappingEvent.SelectHazardousLaneMarker -> {
                     uiState = uiState.copy(
                         selectedHazardousMarker = event.marker,
-                        bottomSheetType = BottomSheetType.IncidentDescription.type).also {
-                        expandBottomSheet()
-                    }
+                        incidentDescriptionDialogVisible = true)
                 }
 
                 is MappingEvent.DeleteHazardousLaneMarkerFailed -> {
@@ -1758,10 +1767,8 @@ fun MappingScreen(
                 MappingUiEvent.SelectImageFromGallery -> openGallery()
                 MappingUiEvent.ViewImage -> viewIncidentImage()
                 MappingUiEvent.ViewImageIncidentDetails -> viewIncidentDetails()
-                MappingUiEvent.DismissReportIncidentBottomSheet -> {
-                    collapseBottomSheet()
-                }
-
+                is MappingUiEvent.IncidentDescriptionDialog -> incidentDescriptionDialog(event.visibility)
+                is MappingUiEvent.ReportIncidentDialog -> reportIncidentDialog(event.visibility)
             }
         }
     )
