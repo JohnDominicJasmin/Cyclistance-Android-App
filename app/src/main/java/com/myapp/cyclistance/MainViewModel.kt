@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
 
     private fun subscribeToIntentActionUpdates() {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-            mappingUseCase.intentActionUseCase().catch {
+            mappingUseCase.notificationIntentUseCase().catch {
             }.distinctUntilChanged().onEach {intentAction ->
                 if(intentAction.isEmpty()){
                     return@onEach
@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
 
     fun setIntentAction(intentAction: String){
         viewModelScope.launch(Dispatchers.IO) {
-            mappingUseCase.intentActionUseCase(intentAction)
+            mappingUseCase.notificationIntentUseCase(intentAction)
         }
     }
 

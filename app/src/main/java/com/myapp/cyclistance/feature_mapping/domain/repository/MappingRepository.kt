@@ -25,6 +25,8 @@ interface MappingRepository {
     suspend fun getRescueTransactionById(transactionId: String): Flow<RescueTransactionItem>
     suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem)
     suspend fun deleteRescueTransaction(transactionId: String)
+    suspend fun removeUserTransaction(id: String)
+
 
 
     suspend fun getUserLocation(): Flow<LocationModel>

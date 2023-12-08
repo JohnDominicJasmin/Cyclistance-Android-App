@@ -45,14 +45,7 @@ data class UserItem(
             )
         }
 
-        fun removeUserTransaction(id: String): UserItem{
-            return UserItem(
-                id = id,
-                transaction = TransactionModel(),
-                userAssistance = UserAssistanceModel(needHelp = false),
-                rescueRequest = RescueRequest()
-            )
-        }
+
 
     }
 

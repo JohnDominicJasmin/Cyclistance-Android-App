@@ -1,0 +1,43 @@
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <runningDeviceTargetSelectedWithDropDown>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-12-03T14:51:10.402704056Z\" />\n    <multipleDevicesSelectedInDropDown value=\"true\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"320334171841\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n  </component>\n</project>
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	
++++ b/.idea/deploymentTargetDropDown.xml	
+@@ -1,9 +1,9 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="deploymentTargetDropDown">
+-    <runningDeviceTargetSelectedWithDropDown>
++    <targetSelectedWithDropDown>
+       <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
++        <type value="QUICK_BOOT_TARGET" />
+         <deviceKey>
+           <Key>
+             <type value="VIRTUAL_DEVICE_PATH" />
+@@ -11,19 +11,7 @@
+           </Key>
+         </deviceKey>
+       </Target>
+-    </runningDeviceTargetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-12-03T14:51:10.402704056Z" />
+-    <multipleDevicesSelectedInDropDown value="true" />
+-    <runningDeviceTargetsSelectedWithDialog>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="SERIAL_NUMBER" />
+-            <value value="320334171841" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </runningDeviceTargetsSelectedWithDialog>
++    </targetSelectedWithDropDown>
++    <timeTargetWasSelectedWithDropDown value="2023-12-08T07:21:44.388636030Z" />
+   </component>
+ </project>
+\ No newline at end of file

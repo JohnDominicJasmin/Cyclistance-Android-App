@@ -331,6 +331,19 @@ class MappingRepositoryImpl(
         }.map { it.toRescueTransaction() }
 
 
+    override suspend fun removeUserTransaction(id: String) {
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+
+        withContext(scope) {
+            handleException {
+                api.removeUserTransaction(id)
+            }
+        }
+    }
+
+
     override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) =
         withContext(scope) {
             handleException {
