@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.report_incident
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape

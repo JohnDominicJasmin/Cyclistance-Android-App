@@ -1,6 +1,7 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.incident_description
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -195,7 +197,7 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
         CyclistanceTheme(darkTheme = isDarkTheme) {
 
 
-            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
+            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colors.background)) {
                 BottomSheetIncidentDescription(
 
                     uiState = MappingUiState(
