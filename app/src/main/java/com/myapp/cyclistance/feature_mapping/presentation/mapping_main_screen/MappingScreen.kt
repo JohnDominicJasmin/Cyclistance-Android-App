@@ -1147,8 +1147,8 @@ fun MappingScreen(
         {
             filesAndMediaPermissionState.requestPermission(
                 onGranted = {
-                    openGalleryResultLauncher.launch("image/*")
                     accessPhotoDialog(false)
+                    openGalleryResultLauncher.launch("image/*")
                 }, onExplain = {
                     uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true)
                 }, onDenied = {
@@ -1162,8 +1162,8 @@ fun MappingScreen(
         {
             openCameraPermissionState.requestPermission(
                 onGranted = {
-                    openCameraResultLauncher.launch()
                     accessPhotoDialog(false)
+                    openCameraResultLauncher.launch()
                 }, onExplain = {
                     uiState = uiState.copy(cameraPermissionDialogVisible = true)
                 }, onDenied = {
@@ -1208,7 +1208,8 @@ fun MappingScreen(
 
     val removeIncidentImage = remember{{
         uiState = uiState.copy(
-            incidentImageUri = null
+            incidentImageUri = null,
+            incidentImageErrorMessage = ""
         )
     }}
 
@@ -1777,7 +1778,7 @@ fun MappingScreen(
                 MappingUiEvent.ViewImageIncidentDetails -> viewIncidentDetails()
                 is MappingUiEvent.IncidentDescriptionDialog -> incidentDescriptionDialog(event.visibility)
                 is MappingUiEvent.ReportIncidentDialog -> reportIncidentDialog(event.visibility)
-                MappingUiEvent.RemoveIncidentImage -> removeIncidentImage()
+                MappingUiEvent.ResetIncidentReport -> removeIncidentImage()
             }
         }
     )
