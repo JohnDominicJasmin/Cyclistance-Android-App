@@ -5,18 +5,14 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.myapp.cyclistance.core.utils.constants.MappingConstants
 import com.myapp.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
-import com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.destination_arrived.BottomSheetReachedDestination
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.destination_arrived.BottomSheetRescueArrived
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description.BottomSheetIncidentDescription
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.map_type.MapTypeBottomSheet
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.on_going_rescue.BottomSheetOnGoingRescue
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident.BottomSheetReportIncident
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.search_assistance.BottomSheetSearchingAssistance
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
@@ -29,9 +25,7 @@ fun MappingBottomSheet(
     modifier: Modifier = Modifier,
     state: MappingState,
     uiState: MappingUiState,
-    incidentDescription: TextFieldValue,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    markerPostedCount: Int,
     event: (MappingUiEvent) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -41,8 +35,7 @@ fun MappingBottomSheet(
     val sheetGesturesEnabled = remember(uiState.bottomSheetType) {
         uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&
         uiState.bottomSheetType != BottomSheetType.DestinationReached.type &&
-        uiState.bottomSheetType != BottomSheetType.RescuerArrived.type &&
-        uiState.bottomSheetType != BottomSheetType.IncidentDescription.type
+        uiState.bottomSheetType != BottomSheetType.RescuerArrived.type
     }
 
     MappingBottomSheet(
@@ -75,29 +68,6 @@ fun MappingBottomSheet(
 
                 }
 
-                BottomSheetType.ReportIncident.type -> {
-
-                    BottomSheetReportIncident(
-                        modifier = modifier,
-                        onNewLabel = {
-                            event(MappingUiEvent.OnChangeIncidentLabel(it))
-                        }, onChangeDescription = {
-                            event(MappingUiEvent.OnChangeIncidentDescription(it))
-                        }, onClickConfirm = {
-                            event(MappingUiEvent.OnReportIncident(uiState.selectedIncidentLabel))
-
-                        }, incidentDescription = incidentDescription,
-                        markerPostedCount = markerPostedCount,
-                        uiState = uiState,
-                        addIncidentImage = {
-                            event(MappingUiEvent.AccessPhotoDialog(visibility = true))
-                        }, viewImage = {
-                            event(MappingUiEvent.ViewImage)
-                        }, dismissBottomSheet = {
-                            event(MappingUiEvent.DismissReportIncidentBottomSheet)
-                        })
-
-                }
 
                 BottomSheetType.SearchAssistance.type -> {
 
@@ -146,30 +116,6 @@ fun MappingBottomSheet(
 
 
                 }
-
-                BottomSheetType.IncidentDescription.type -> {
-                    BottomSheetIncidentDescription(
-                        modifier = modifier,
-                        onDismissBottomSheet = { event(MappingUiEvent.DismissIncidentDescriptionBottomSheet) },
-                        uiState = uiState,
-                        state = state,
-                        icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
-                        onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },
-                        onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
-                        onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) },
-                        onClickConfirmButton = { description, label ->
-                            event(
-                                MappingUiEvent.UpdateIncidentDescription(
-                                    label = label,
-                                    description = description))
-                        },
-                        onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
-                        viewProofIncident = { event(MappingUiEvent.ViewImageIncidentDetails) },
-                    )
-
-                }
-
-
             }
         }, content = content)
 }
