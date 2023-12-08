@@ -152,13 +152,17 @@ fun NavScreen(
         }
     }
 
-    val closeDrawer = remember {
-        {
-            coroutineScope.launch {
-                scaffoldState.drawerState.close()
-            }
+    val closeDrawer = remember {{
+        coroutineScope.launch {
+            scaffoldState.drawerState.close()
         }
-    }
+    }}
+
+    val openDrawer = remember{{
+        coroutineScope.launch {
+            scaffoldState.drawerState.open()
+        }
+    }}
 
     val onClickSettings = remember {
         {
@@ -212,9 +216,8 @@ fun NavScreen(
 
     val onClickMenuIcon = remember {
         {
-            closeDrawer()
+            openDrawer()
             editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
-
             Unit
         }
     }
