@@ -650,9 +650,6 @@ fun MappingScreen(
     val onMapLongClick = remember {
         { latLng: LatLng ->
             checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
-                if(uiState.bottomSheetType == BottomSheetType.OnGoingRescue.type){
-                    return@checkIfHasEditingMarker
-                }
                 onDismissRescueeBanner()
                 expandableFab(false)
                 uiState = uiState.copy(
