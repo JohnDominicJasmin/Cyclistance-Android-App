@@ -232,7 +232,7 @@ class MappingViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
-            createMockUpUsers()
+//            createMockUpUsers()
             trackingHandler.updateClient()
 
         }
@@ -903,9 +903,7 @@ class MappingViewModel @Inject constructor(
 
 
     private suspend fun cancelUserHelpRequest() {
-
-        mappingUseCase.createUserUseCase(
-            user = UserItem.cancelUserHelpRequest(id = getId()))
+        mappingUseCase.cancelHelpRequestUseCase(id = getId())
     }
 
 

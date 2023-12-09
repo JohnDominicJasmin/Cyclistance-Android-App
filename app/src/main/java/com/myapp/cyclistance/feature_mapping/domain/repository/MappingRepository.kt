@@ -14,6 +14,7 @@ interface MappingRepository {
     suspend fun deleteUser(id: String)
 
 
+    suspend fun cancelHelpRequest(id: String)
     suspend fun deleteRescueRespondent(userId: String, respondentId: String)
     suspend fun addRescueRespondent(userId: String, respondentId: String)
     suspend fun acceptRescueRequest(userId: String, rescuerId: String)

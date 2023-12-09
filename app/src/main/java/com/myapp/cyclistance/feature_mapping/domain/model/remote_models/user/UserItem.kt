@@ -33,21 +33,5 @@ data class UserItem(
     fun isRescueRequestPending(id: String?) = rescuePending?.respondents?.any { it.clientId == id }
 
 
-    companion object {
-
-        fun cancelUserHelpRequest(id: String): UserItem {
-            return UserItem(
-                id = id,
-                userAssistance = UserAssistanceModel(
-                    needHelp = false,
-                    confirmationDetail = ConfirmationDetailModel()
-                )
-            )
-        }
-
-
-
-    }
-
 
 }

@@ -24,6 +24,7 @@ import com.myapp.cyclistance.feature_mapping.domain.use_case.map_type.TrafficMap
 import com.myapp.cyclistance.feature_mapping.domain.use_case.notification.NewRescueRequestNotificationUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.notification.RequestAcceptedNotificationUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.CancelHelpRequestUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
@@ -117,7 +118,8 @@ object MappingViewModelModule {
             defaultMapTypeUseCase = DefaultMapTypeUseCase(mappingUiStoreRepository),
             hazardousMapTypeUseCase = HazardousMapTypeUseCase(mappingUiStoreRepository),
             trafficMapTypeUseCase = TrafficMapTypeUseCase(mappingUiStoreRepository),
-            removeUserTransactionUseCase = RemoveUserTransactionUseCase(mappingRepository)
+            removeUserTransactionUseCase = RemoveUserTransactionUseCase(mappingRepository),
+            cancelHelpRequestUseCase = CancelHelpRequestUseCase(mappingRepository),
 
         )
 
