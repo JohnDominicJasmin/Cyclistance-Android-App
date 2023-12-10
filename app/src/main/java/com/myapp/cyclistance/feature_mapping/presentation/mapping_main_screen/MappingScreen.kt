@@ -1617,7 +1617,7 @@ fun MappingScreen(
 
 
     LaunchedEffect(
-        key1 = state.rescueTransaction?.route,
+        key1 = state.rescueTransaction,
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
 
@@ -1628,6 +1628,17 @@ fun MappingScreen(
         }
 
         if (hasTransaction.not() || isRescueCancelled) {
+            uiState = uiState.copy(routeDirection = null)
+            return@LaunchedEffect
+        }
+
+        if(state.rescueTransaction?.isRescueFinished() == true){
+            uiState = uiState.copy(routeDirection = null)
+            return@LaunchedEffect
+        }
+
+
+        if(state.rescueTransaction?.isRescueOnGoing() == false){
             uiState = uiState.copy(routeDirection = null)
             return@LaunchedEffect
         }
