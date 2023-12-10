@@ -20,6 +20,10 @@ interface CyclistanceApi {
     suspend fun removeUserTransaction(@Path("id") id: String)
 
 
+    @PUT("/app/v1/cancel-help-request/{id}")
+    suspend fun cancelHelpRequest(@Path("id") id: String)
+
+
 
     @DELETE("/api/v1/delete-rescue-respondent/{user_id}/{respondent_id}")
     suspend fun deleteRescueRespondent(@Path("user_id") userId: String, @Path("respondent_id") respondentId: String)

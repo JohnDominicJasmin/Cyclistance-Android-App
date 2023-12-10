@@ -343,6 +343,17 @@ class MappingRepositoryImpl(
         }
     }
 
+    override suspend fun cancelHelpRequest(id: String) {
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+
+        withContext(scope) {
+            handleException {
+                api.cancelHelpRequest(id)
+            }
+        }
+    }
 
     override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) =
         withContext(scope) {
