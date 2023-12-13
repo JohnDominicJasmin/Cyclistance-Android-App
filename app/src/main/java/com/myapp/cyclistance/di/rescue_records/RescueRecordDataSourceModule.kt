@@ -6,12 +6,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.myapp.cyclistance.feature_rescue_record.data.local.RescueRecordDatabase
 import com.myapp.cyclistance.feature_rescue_record.data.repository.RescueRecordRepositoryImpl
 import com.myapp.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
+import com.myapp.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.metrics.AddRideMetricsUseCase
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.rate.RateRescueUseCase
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.rate.RateRescuerUseCase
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.rescue_record.AddRescueRecordUseCase
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.rescue_record.GetRescueRecordUseCase
-import com.myapp.cyclistance.feature_rescue_record.domain.use_case.rescue_record.RescueRecordUseCase
+import com.myapp.cyclistance.feature_rescue_record.domain.use_case.ride_details.RideDetailsUseCase
+import com.myapp.cyclistance.feature_rescue_record.domain.use_case.ride_metrics.RideMetricsUseCase
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.ridehistory.GetRideHistoryUseCase
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.stats.UpdateStatsUseCase
 import dagger.Module
@@ -54,6 +56,8 @@ object RescueRecordDataSourceModule {
             rateRescuerUseCase = RateRescuerUseCase(repository = rescueRecordRepository),
             updateStatsUseCase = UpdateStatsUseCase(repository = rescueRecordRepository),
             addRideMetricsUseCase = AddRideMetricsUseCase(repository = rescueRecordRepository),
+            rideDetailsUseCase = RideDetailsUseCase(repository = rescueRecordRepository),
+            rideMetricsUseCase = RideMetricsUseCase(repository = rescueRecordRepository)
         )
     }
 
