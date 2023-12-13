@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.cyclistance.core.utils.constants.RescueRecordConstants
 import com.myapp.cyclistance.core.utils.constants.RescueRecordConstants.RIDE_HISTORY_VM_STATE_KEY
-import com.myapp.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
+import com.myapp.cyclistance.feature_rescue_record.domain.use_case.rescue_record.RescueRecordUseCase
 import com.myapp.cyclistance.feature_rescue_record.presentation.list_histories.presentation.event.RideHistoryEvent
 import com.myapp.cyclistance.feature_rescue_record.presentation.list_histories.presentation.state.RideHistoryState
 import dagger.hilt.android.lifecycle.HiltViewModel

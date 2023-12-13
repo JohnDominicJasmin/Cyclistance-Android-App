@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_rescue_record.domain.use_case
+package com.myapp.cyclistance.feature_rescue_record.domain.use_case.ridehistory
 
 import com.myapp.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
 
