@@ -45,23 +45,6 @@ class RescueRecordRepositoryImpl(
     private val scope: CoroutineContext = Dispatchers.IO
 
 
-    override suspend fun addRescueRecord(rideDetails: RideDetails) {
-        suspendCoroutine { continuation ->
-            firestore
-                .collection(RESCUE_RECORD_COLLECTION)
-                .document(rideDetails.rideId)
-                .set(rideDetails, SetOptions.merge())
-                .addOnSuccessListener {
-                    continuation.resume(Unit)
-                }.addOnFailureListener {
-                    continuation.resumeWithException(
-                        RescueRecordExceptions.InsertRescueRecordException(
-                            it.message.toString()
-                        )
-                    )
-                }
-        }
-    }
 
     override suspend fun addRideMetrics(rideId: String, rideMetrics: RideMetrics) {
         suspendCoroutine { continuation ->
@@ -105,6 +88,26 @@ class RescueRecordRepositoryImpl(
             rideMetrics.map { metricsInfo ->
                 metricsInfo.toRideMetrics()
             }
+        }
+    }
+
+
+
+    override suspend fun addRescueRecord(rideDetails: RideDetails) {
+        suspendCoroutine { continuation ->
+            firestore
+                .collection(RESCUE_RECORD_COLLECTION)
+                .document(rideDetails.rideId)
+                .set(rideDetails, SetOptions.merge())
+                .addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener {
+                    continuation.resumeWithException(
+                        RescueRecordExceptions.InsertRescueRecordException(
+                            it.message.toString()
+                        )
+                    )
+                }
         }
     }
 

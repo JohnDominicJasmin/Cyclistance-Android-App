@@ -8,7 +8,6 @@ import com.myapp.cyclistance.feature_rescue_record.data.local.type_converters.Ri
 import java.util.Date
 
 @Entity
-
 data class RideDetailInfo(
     @PrimaryKey(autoGenerate = false)
     val rideId: String = "",

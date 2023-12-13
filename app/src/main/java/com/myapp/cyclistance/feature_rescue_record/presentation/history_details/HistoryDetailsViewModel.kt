@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.cyclistance.core.utils.constants.RescueRecordConstants.RIDE_HISTORY_DETAILS_VM_STATE_KEY
-import com.myapp.cyclistance.feature_rescue_record.domain.use_case.rescue_record.RescueRecordUseCase
+import com.myapp.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.myapp.cyclistance.feature_rescue_record.presentation.history_details.event.HistoryDetailsEvent
 import com.myapp.cyclistance.feature_rescue_record.presentation.history_details.event.HistoryDetailsVmEvent
 import com.myapp.cyclistance.feature_rescue_record.presentation.history_details.state.HistoryDetailsState
