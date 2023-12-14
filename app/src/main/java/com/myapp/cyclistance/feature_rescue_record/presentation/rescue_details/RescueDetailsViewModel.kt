@@ -14,9 +14,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,17 +54,19 @@ class RescueDetailsViewModel @Inject constructor(
     }
 
     private fun loadRescueDetails(){
-        viewModelScope.launch(SupervisorJob()) {
-            rescueRecordUseCase.rescueDetailsUseCase().collectLatest { rideDetails ->
-                _eventFlow.emit(value = RescueDetailsEvent.GetRideSummarySuccess(rideSummary = rideDetails.rideSummary, ))
-            }
-        }
 
-        viewModelScope.launch(SupervisorJob()){
-            rescueRecordUseCase.rideMetricsUseCase().collectLatest { metrics ->
-                _eventFlow.emit(value = RescueDetailsEvent.GetRideMetricsSuccess(rideMetrics = metrics))
-            }
-        }
+        rescueRecordUseCase.rideDetailsUseCase().catch {
+            Timber.v( "Failed to load ride details: ${it.message}")
+        }.onEach {
+            _eventFlow.emit(value = RescueDetailsEvent.GetRideSummarySuccess(rideSummary = it.last().rideSummary))
+        }.launchIn(viewModelScope)
+
+
+        rescueRecordUseCase.rideMetricsUseCase().catch {
+            Timber.v( "Failed to load ride details: ${it.message}")
+        }.onEach {metrics ->
+            _eventFlow.emit(value = RescueDetailsEvent.GetRideMetricsSuccess(rideMetrics = metrics.last()))
+        }.launchIn(viewModelScope)
 
         saveState()
     }
