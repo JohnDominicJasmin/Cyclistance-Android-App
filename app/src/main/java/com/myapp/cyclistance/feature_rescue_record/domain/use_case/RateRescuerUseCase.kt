@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_rescue_record.domain.use_case.rate
+package com.myapp.cyclistance.feature_rescue_record.domain.use_case
 
 import com.myapp.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
 
