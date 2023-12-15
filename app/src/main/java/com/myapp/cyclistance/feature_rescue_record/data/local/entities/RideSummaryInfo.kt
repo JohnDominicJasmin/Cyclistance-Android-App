@@ -1,5 +1,8 @@
 package com.myapp.cyclistance.feature_rescue_record.data.local.entities
 
+import androidx.annotation.Keep
+
+@Keep
 data class RideSummaryInfo(
     val rating: Double = 0.0,
     val ratingText: String = "",
