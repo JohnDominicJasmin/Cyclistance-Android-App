@@ -51,7 +51,9 @@ class RescueResultViewModel @Inject constructor(
         rescueRecordUseCase.rideDetailsUseCase().catch {
             Timber.e( "Failed to load ride details: ${it.message}")
         }.onEach {rideDetails ->
-            _state.update { it.copy(rideDetails = rideDetails.last()) }
+            if(rideDetails.isNotEmpty()){
+                _state.update { it.copy(rideDetails = rideDetails.last()) }
+            }
         }.launchIn(viewModelScope)
 
     }

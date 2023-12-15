@@ -1,5 +1,6 @@
 package com.myapp.cyclistance.feature_rescue_record.data.local.entities
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -8,6 +9,7 @@ import com.myapp.cyclistance.feature_rescue_record.data.local.type_converters.Ri
 import java.util.Date
 
 @Entity
+@Keep
 data class RideDetailInfo(
     @PrimaryKey(autoGenerate = false)
     val rideId: String = "",

@@ -33,6 +33,9 @@
 -keepnames class com.myapp.cyclistance.feature_report_account.domain.model.** { *; }
 -keepnames class com.myapp.cyclistance.feature_rescue_record.domain.model.ui.** { *; }
 -keepnames class com.myapp.cyclistance.feature_user_profile.domain.model.** { *; }
+-keep class com.myapp.cyclistance.feature_rescue_record.data.local.entities.** { *; }
+-keep class com.myapp.cyclistance.feature_rescue_record.data.local.type_converters.** { *; }
+
 
 -dontnote okhttp3.**, okio.**, retrofit2.**
 -dontwarn retrofit2.**
@@ -41,3 +44,15 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
 -keep class retrofit2.** { *; }
+-keep class androidx.room.RoomDatabase { *; }
+-keep class androidx.room.Room { *; }
+-keep class android.arch.** { *; }
+-keep @androidx.room.Entity class *
+-dontwarn androidx.room.paging.**
+
+-keepattributes Signature
+
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+
+-keepattributes AnnotationDefault,RuntimeVisibleAnnotations

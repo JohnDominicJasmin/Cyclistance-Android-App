@@ -38,6 +38,8 @@ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.ut
 import com.myapp.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.myapp.cyclistance.feature_report_account.domain.model.BannedAccountDetails
 import com.myapp.cyclistance.feature_report_account.domain.use_case.ReportAccountUseCase
+import com.myapp.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
+import com.myapp.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
 import com.myapp.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.myapp.cyclistance.feature_user_profile.domain.model.UserStats
 import com.myapp.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
@@ -607,18 +609,37 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private suspend fun addRideDetails(rideDetails: RideDetails){
+        runCatching {
+            rescueRecordUseCase.rideDetailsUseCase(rideDetails = rideDetails)
+        }.onSuccess {
+            Timber.v("AddRideDetails Successfully added ride details")
+        }.onFailure {
+            Timber.v("AddRideDetails Failed to add ride details")
+        }
+    }
+
+    private suspend fun addRideMetrics(rideMetrics: RideMetrics){
+        runCatching {
+            rescueRecordUseCase.rideMetricsUseCase(rideMetrics = rideMetrics)
+        }.onSuccess {
+            Timber.v("AddRideMetrics Successfully added ride metrics")
+        }.onFailure {
+            Timber.v("AddRideMetrics Failed to add ride metrics")
+        }
+    }
+
     private fun rescuerArrived() {
         val role = state.value.user.getRole()
         val rideDetails = trackingHandler.getRideDetails()
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
-                rescueRecordUseCase.rideDetailsUseCase(rideDetails = rideDetails)
-
+                addRideDetails(rideDetails = rideDetails)
                 if (role == Role.Rescuee.name) {
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
                 }else{
                     val rideMetrics = trackingHandler.getRideMetrics()
-                    rescueRecordUseCase.rideMetricsUseCase(rideMetrics = rideMetrics)
+                    addRideMetrics(rideMetrics = rideMetrics)
                     rescueRecordUseCase.addRideMetricsUseCase(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
                     rescueRecordUseCase.updateStatsUseCase(userStats = UserStats(
                         rescuerId = rideDetails.rescuerId,

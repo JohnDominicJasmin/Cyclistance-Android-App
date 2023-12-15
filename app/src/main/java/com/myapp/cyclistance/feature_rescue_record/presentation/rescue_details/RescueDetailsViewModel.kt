@@ -58,14 +58,18 @@ class RescueDetailsViewModel @Inject constructor(
         rescueRecordUseCase.rideDetailsUseCase().catch {
             Timber.v( "Failed to load ride details: ${it.message}")
         }.onEach {
-            _eventFlow.emit(value = RescueDetailsEvent.GetRideSummarySuccess(rideSummary = it.last().rideSummary))
+            if(it.isNotEmpty()){
+                _eventFlow.emit(value = RescueDetailsEvent.GetRideSummarySuccess(rideSummary = it.last().rideSummary))
+            }
         }.launchIn(viewModelScope)
 
 
         rescueRecordUseCase.rideMetricsUseCase().catch {
             Timber.v( "Failed to load ride details: ${it.message}")
-        }.onEach {metrics ->
-            _eventFlow.emit(value = RescueDetailsEvent.GetRideMetricsSuccess(rideMetrics = metrics.last()))
+        }.onEach { metrics ->
+            if(metrics.isNotEmpty()){
+                _eventFlow.emit(value = RescueDetailsEvent.GetRideMetricsSuccess(rideMetrics = metrics.last()))
+            }
         }.launchIn(viewModelScope)
 
         saveState()
