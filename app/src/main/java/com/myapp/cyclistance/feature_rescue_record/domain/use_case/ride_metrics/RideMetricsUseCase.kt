@@ -5,7 +5,7 @@ import com.myapp.cyclistance.feature_rescue_record.domain.repository.RescueRecor
 import kotlinx.coroutines.flow.Flow
 
 class RideMetricsUseCase(private val repository: RescueRecordRepository) {
-    operator fun invoke(): Flow<List<RideMetrics>> {
+    suspend operator fun invoke(): Flow<List<RideMetrics>> {
         return repository.getRideMetrics()
     }
     suspend operator fun invoke(rideMetrics: RideMetrics){

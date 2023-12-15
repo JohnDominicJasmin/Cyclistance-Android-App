@@ -69,7 +69,7 @@ class RescueRecordRepositoryImpl(
        }
     }
 
-    override fun getRideDetails(): Flow<List<RideDetails>> {
+    override suspend fun getRideDetails(): Flow<List<RideDetails>> {
         return rescueRecordDao.getRideDetailInfo().map {rideDetails ->
             rideDetails.map { detailInfo ->
                 detailInfo.toRideDetails()
@@ -83,7 +83,7 @@ class RescueRecordRepositoryImpl(
         }
     }
 
-    override fun getRideMetrics(): Flow<List<RideMetrics>> {
+    override suspend fun getRideMetrics(): Flow<List<RideMetrics>> {
         return rescueRecordDao.getRideMetricsInfo().map { rideMetrics ->
             rideMetrics.map { metricsInfo ->
                 metricsInfo.toRideMetrics()
