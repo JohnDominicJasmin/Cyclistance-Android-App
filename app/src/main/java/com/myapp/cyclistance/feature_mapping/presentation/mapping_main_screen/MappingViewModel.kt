@@ -254,7 +254,7 @@ class MappingViewModel @Inject constructor(
             val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch
             val user = state.value.user
 
-
+        1
             trackingHandler.checkCurrentTransactions(user = user, rescuer = rescuer) {
 
                 coroutineScope {
@@ -612,7 +612,7 @@ class MappingViewModel @Inject constructor(
         val rideDetails = trackingHandler.getRideDetails()
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
-                rescueRecordUseCase.rideDetailsUseCase(rideDetails = rideDetails)
+                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
 
                 if (role == Role.Rescuee.name) {
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
