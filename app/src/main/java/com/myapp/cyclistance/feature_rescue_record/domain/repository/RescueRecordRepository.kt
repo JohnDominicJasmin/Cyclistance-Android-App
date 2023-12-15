@@ -20,8 +20,10 @@ interface RescueRecordRepository {
     suspend fun addRideMetrics(rideId: String, rideMetrics: RideMetrics)
 
     suspend fun upsertRideDetails(rideDetails: RideDetails)
+
     fun getRideDetails(): Flow<List<RideDetails>>
 
     suspend fun upsertRideMetrics(rideMetrics: RideMetrics)
-     fun getRideMetrics():Flow<List<RideMetrics>>
+    fun getRideMetrics():Flow<List<RideMetrics>>
+
 }
