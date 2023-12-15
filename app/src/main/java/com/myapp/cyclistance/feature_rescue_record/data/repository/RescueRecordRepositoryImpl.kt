@@ -11,12 +11,7 @@ import com.myapp.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE_R
 import com.myapp.cyclistance.core.utils.constants.RescueRecordConstants.RIDE_DATE_KEY
 import com.myapp.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_RATINGS
 import com.myapp.cyclistance.core.utils.constants.UtilConstants
-import com.myapp.cyclistance.feature_rescue_record.data.local.dao.RescueRecordDao
-import com.myapp.cyclistance.feature_rescue_record.data.mapper.RescueDetailInfoMapper.toRideDetailInfo
-import com.myapp.cyclistance.feature_rescue_record.data.mapper.RescueDetailInfoMapper.toRideDetails
 import com.myapp.cyclistance.feature_rescue_record.data.mapper.RideHistoryMapper.toRideHistoryItem
-import com.myapp.cyclistance.feature_rescue_record.data.mapper.RideMetricsInfoMapper.toRideMetrics
-import com.myapp.cyclistance.feature_rescue_record.data.mapper.RideMetricsInfoMapper.toRideMetricsInfo
 import com.myapp.cyclistance.feature_rescue_record.domain.exceptions.RescueRecordExceptions
 import com.myapp.cyclistance.feature_rescue_record.domain.model.ui.RescueRide
 import com.myapp.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
@@ -28,8 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -39,7 +32,6 @@ import kotlin.coroutines.suspendCoroutine
 
 class RescueRecordRepositoryImpl(
     private val firestore: FirebaseFirestore,
-    private val rescueRecordDao: RescueRecordDao
 
 ) : RescueRecordRepository {
     private val scope: CoroutineContext = Dispatchers.IO
@@ -77,34 +69,6 @@ class RescueRecordRepositoryImpl(
                         )
                     )
                 }
-        }
-    }
-
-    override suspend fun upsertRideDetails(rideDetails: RideDetails) {
-       withContext(scope){
-              rescueRecordDao.upsertRideDetailInfo(rideDetails.toRideDetailInfo())
-       }
-    }
-
-    override suspend fun getRideDetails(): Flow<List<RideDetails>> {
-        return rescueRecordDao.getRideDetailInfo().map {rideDetails ->
-            rideDetails.map { detailInfo ->
-                detailInfo.toRideDetails()
-            }
-        }
-    }
-
-    override suspend fun upsertRideMetrics(rideMetrics: RideMetrics) {
-        withContext(scope){
-            rescueRecordDao.upsertRideMetricsInfo(rideMetrics.toRideMetricsInfo())
-        }
-    }
-
-    override suspend fun getRideMetrics(): Flow<List<RideMetrics>> {
-        return rescueRecordDao.getRideMetricsInfo().map { rideMetrics ->
-            rideMetrics.map { metricsInfo ->
-                metricsInfo.toRideMetrics()
-            }
         }
     }
 
