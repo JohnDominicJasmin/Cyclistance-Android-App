@@ -522,15 +522,6 @@ fun MappingScreen(
         state.getTransactionId().isNotEmpty()
     }
 
-    val rescueOnGoing = remember(key1 = state.rescueTransaction?.status){
-        state.rescueTransaction?.isRescueOnGoing() ?: false
-    }
-
-    val rescueFinished = remember(key1= state.rescueTransaction?.status){
-        state.rescueTransaction?.isRescueFinished() ?: false
-    }
-
-
     val isRescueCancelled =
         remember(state.rescueTransaction) {
             state.rescueTransaction?.isRescueCancelled() ?: false
@@ -1054,14 +1045,12 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingVmEvent.ArrivedAtLocation)
     }}
 
-    val startNavigation = remember(
-        key1 = state.user.transaction?.transactionId,
-        key2 = state.rescueTransaction?.status) {
+    val startNavigation = remember(state.user.transaction?.transactionId) {
         {
             val role = state.user.getRole()
             val isRescuer = role == Role.Rescuer.name
-
-            if (rescueOnGoing) {
+            val userTransaction = state.user.transaction?.transactionId ?: ""
+            if (userTransaction.isNotEmpty()) {
                 uiState = uiState.copy(
                     requestHelpButtonVisible = false,
                     bottomSheetType = BottomSheetType.OnGoingRescue.type,
@@ -1332,14 +1321,22 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = state.rescueTransaction?.status, key2 = hasTransaction) {
+        val rescueTransaction = state.rescueTransaction
+        val isRescueFinished = rescueTransaction?.isRescueFinished() ?: false
+        val isRescueOnGoing = rescueTransaction?.isRescueOnGoing() ?: false
 
-        if (rescueOnGoing) {
+        if (rescueTransaction == null) {
             return@LaunchedEffect
         }
 
-        if (!rescueFinished) {
+        if (isRescueOnGoing) {
             return@LaunchedEffect
         }
+
+        if (!isRescueFinished) {
+            return@LaunchedEffect
+        }
+
         if(!hasTransaction){
             return@LaunchedEffect
         }
@@ -1350,7 +1347,7 @@ fun MappingScreen(
         } else {
             BottomSheetType.DestinationReached.type
         }
-        uiState = MappingUiState(bottomSheetType = type)
+        uiState = uiState.copy(bottomSheetType = type)
 
     }
 
