@@ -45,23 +45,6 @@ class RescueRecordRepositoryImpl(
     private val scope: CoroutineContext = Dispatchers.IO
 
 
-    override suspend fun addRescueRecord(rideDetails: RideDetails) {
-        suspendCoroutine { continuation ->
-            firestore
-                .collection(RESCUE_RECORD_COLLECTION)
-                .document(rideDetails.rideId)
-                .set(rideDetails, SetOptions.merge())
-                .addOnSuccessListener {
-                    continuation.resume(Unit)
-                }.addOnFailureListener {
-                    continuation.resumeWithException(
-                        RescueRecordExceptions.InsertRescueRecordException(
-                            it.message.toString()
-                        )
-                    )
-                }
-        }
-    }
 
     override suspend fun addRideMetrics(rideId: String, rideMetrics: RideMetrics) {
         suspendCoroutine { continuation ->
@@ -74,6 +57,54 @@ class RescueRecordRepositoryImpl(
                     continuation.resumeWithException(
                         exception = RescueRecordExceptions.AddRideMetricsException(
                             message = it.message.toString()
+                        )
+                    )
+                }
+        }
+    }
+
+    override suspend fun upsertRideDetails(rideDetails: RideDetails) {
+       withContext(scope){
+              rescueRecordDao.upsertRideDetailInfo(rideDetails.toRideDetailInfo())
+       }
+    }
+
+    override fun getRideDetails(): Flow<List<RideDetails>> {
+        return rescueRecordDao.getRideDetailInfo().map {rideDetails ->
+            rideDetails.map { detailInfo ->
+                detailInfo.toRideDetails()
+            }
+        }
+    }
+
+    override suspend fun upsertRideMetrics(rideMetrics: RideMetrics) {
+        withContext(scope){
+            rescueRecordDao.upsertRideMetricsInfo(rideMetrics.toRideMetricsInfo())
+        }
+    }
+
+    override fun getRideMetrics(): Flow<List<RideMetrics>> {
+        return rescueRecordDao.getRideMetricsInfo().map { rideMetrics ->
+            rideMetrics.map { metricsInfo ->
+                metricsInfo.toRideMetrics()
+            }
+        }
+    }
+
+
+
+    override suspend fun addRescueRecord(rideDetails: RideDetails) {
+        suspendCoroutine { continuation ->
+            firestore
+                .collection(RESCUE_RECORD_COLLECTION)
+                .document(rideDetails.rideId)
+                .set(rideDetails, SetOptions.merge())
+                .addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener {
+                    continuation.resumeWithException(
+                        RescueRecordExceptions.InsertRescueRecordException(
+                            it.message.toString()
                         )
                     )
                 }

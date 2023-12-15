@@ -48,16 +48,12 @@ class RescueResultViewModel @Inject constructor(
     }
 
     private fun loadRideDetails(){
-        viewModelScope.launch(SupervisorJob() + Dispatchers.IO) {
+        rescueRecordUseCase.rideDetailsUseCase().catch {
+            Timber.e( "Failed to load ride details: ${it.message}")
+        }.onEach {rideDetails ->
+            _state.update { it.copy(rideDetails = rideDetails.last()) }
+        }.launchIn(viewModelScope)
 
-            rescueRecordUseCase.rescueDetailsUseCase().catch { rideDetails ->
-                Timber.e( "Failed to load ride details ${rideDetails.message}")
-            }.onEach {rideDetails ->
-                _state.update { it.copy(rideDetails = rideDetails) }
-            }.launchIn(this)
-
-            saveState()
-        }
     }
 
     private fun saveState(){
