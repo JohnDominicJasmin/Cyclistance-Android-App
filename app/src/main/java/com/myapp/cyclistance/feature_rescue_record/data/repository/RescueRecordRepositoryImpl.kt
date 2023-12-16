@@ -111,33 +111,7 @@ class RescueRecordRepositoryImpl(
         }
     }
 
-    override suspend fun upsertRideDetails(rideDetails: RideDetails) {
-       withContext(scope){
-              rescueRecordDao.upsertRideDetailInfo(rideDetails.toRideDetailInfo())
-       }
-    }
 
-    override suspend fun getRideDetails(): Flow<List<RideDetails>> {
-        return rescueRecordDao.getRideDetailInfo().map {rideDetails ->
-            rideDetails.map { detailInfo ->
-                detailInfo.toRideDetails()
-            }
-        }
-    }
-
-    override suspend fun upsertRideMetrics(rideMetrics: RideMetrics) {
-        withContext(scope){
-            rescueRecordDao.upsertRideMetricsInfo(rideMetrics.toRideMetricsInfo())
-        }
-    }
-
-    override suspend fun getRideMetrics(): Flow<List<RideMetrics>> {
-        return rescueRecordDao.getRideMetricsInfo().map { rideMetrics ->
-            rideMetrics.map { metricsInfo ->
-                metricsInfo.toRideMetrics()
-            }
-        }
-    }
 
     override suspend fun updateStats(userStats: UserStats) {
         try {

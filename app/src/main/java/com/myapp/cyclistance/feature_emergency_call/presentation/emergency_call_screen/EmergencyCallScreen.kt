@@ -20,10 +20,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.myapp.cyclistance.core.utils.constants.EmergencyCallConstants.MAX_CONTACTS
 import com.myapp.cyclistance.core.utils.contexts.callPhoneNumber
+import com.myapp.cyclistance.core.utils.permissions.isGranted
+import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallScreenContent
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallEvent
@@ -106,22 +107,17 @@ fun EmergencyCallScreen(
     }
 
     val openPhoneCallPermissionState =
-        rememberPermissionState(permission = Manifest.permission.CALL_PHONE) { permissionGranted ->
-            if (permissionGranted) {
-                uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }
-                    ?.let { callPhoneNumber(it) }
-            }
-        }
+        rememberPermissionState(permission = Manifest.permission.CALL_PHONE)
 
 
     val onClickContact = remember {
         { phoneNumber: String ->
-            if (!openPhoneCallPermissionState.status.isGranted) {
-                uiState = uiState.copy(selectedPhoneNumber = phoneNumber)
-                openPhoneCallPermissionState.launchPermissionRequest()
-            } else {
+
+            openPhoneCallPermissionState.requestPermission(onGranted = {
                 callPhoneNumber(phoneNumber)
-            }
+            }, onDenied = {
+                uiState = uiState.copy(selectedPhoneNumber = phoneNumber)
+            })
 
         }
     }
@@ -132,6 +128,12 @@ fun EmergencyCallScreen(
         }
     }
 
+    LaunchedEffect(key1 = openPhoneCallPermissionState.isGranted()){
+        if(openPhoneCallPermissionState.isGranted()){
+            uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }
+                ?.let { callPhoneNumber(it) }
+        }
+    }
     LaunchedEffect(key1 = true){
         viewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)
     }

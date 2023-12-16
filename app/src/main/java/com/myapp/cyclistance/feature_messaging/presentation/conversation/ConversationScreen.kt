@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import com.myapp.cyclistance.core.utils.permissions.isGranted
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.myapp.cyclistance.feature_messaging.presentation.conversation.components.ConversationContent
@@ -122,12 +123,7 @@ fun ConversationScreen(
 
     val notificationPermissionState = rememberPermissionState(
         permission = Manifest.permission.POST_NOTIFICATIONS
-    ){ permissionGranted ->
-        if(permissionGranted){
-            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-
-    }
+    )
 
     val notificationPermissionDialogVisibility = remember{{ visibility: Boolean ->
         uiState = uiState.copy(notificationPermissionVisible = visibility)
@@ -140,8 +136,6 @@ fun ConversationScreen(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionState.requestPermission(onGranted = {
                 notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }, onExplain = {
-                notificationPermissionDialogVisibility(true)
             }, onDenied = {
                 sendMessage(messageInput.text)
             })
@@ -161,6 +155,19 @@ fun ConversationScreen(
         viewModel.onEvent(event = ConversationVmEvent.MarkAsSeen(messageId))
     }}
 
+
+    LaunchedEffect(key1 = notificationPermissionState.isGranted()){
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU){
+            return@LaunchedEffect
+        }
+
+        if(!notificationPermissionState.isGranted()){
+            return@LaunchedEffect
+        }
+
+        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+
+    }
 
     LaunchedEffect(key1 = userReceiverId){
 
