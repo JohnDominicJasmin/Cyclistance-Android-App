@@ -173,17 +173,11 @@ fun ConfirmDetailsScreen(
                                     message = message.text
                                 )
                             ))
-                    }, onExplain = {
-                        uiState = uiState.copy(
-                            backgroundLocationPermissionDialogVisible = true)
                     }, onDenied = {
                         uiState = uiState.copy(
                             backgroundLocationPermissionDialogVisible = true)
                     })
 
-                }, onExplain = {
-                    uiState = uiState.copy(
-                        foregroundLocationPermissionDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(
                         foregroundLocationPermissionDialogVisible = true)
@@ -203,10 +197,6 @@ fun ConfirmDetailsScreen(
                                     message = message.text
                                 )
                             ))
-                    },
-                    onExplain = {
-                        uiState = uiState.copy(
-                            foregroundLocationPermissionDialogVisible = true)
                     },
                     onDenied = {
                         uiState = uiState.copy(

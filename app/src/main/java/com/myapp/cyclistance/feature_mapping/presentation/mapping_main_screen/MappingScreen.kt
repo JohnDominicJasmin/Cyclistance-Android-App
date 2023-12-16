@@ -26,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.FeatureCollection
@@ -60,6 +59,7 @@ import com.myapp.cyclistance.core.utils.contexts.callPhoneNumber
 import com.myapp.cyclistance.core.utils.contexts.shareLocation
 import com.myapp.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.myapp.cyclistance.core.utils.json.JsonConverter.toJson
+import com.myapp.cyclistance.core.utils.permissions.isGranted
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.core.utils.save_images.ImageUtils
 import com.myapp.cyclistance.core.utils.save_images.ImageUtils.toImageUri
@@ -259,8 +259,6 @@ fun MappingScreen(
                 onGranted = {
                     context.startLocationServiceIntentAction()
                     requestHelp()
-                }, onExplain = {
-                    uiState = uiState.copy(locationPermissionDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
@@ -297,20 +295,27 @@ fun MappingScreen(
     )
     val notificationPermissionState = rememberPermissionState(
         permission = Manifest.permission.POST_NOTIFICATIONS
-    ) { permissionGranted ->
-        if (permissionGranted) {
-            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
+    )
 
-    }
+    val filesAndMediaPermissionState =
+        rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE))
+
+
+    val openCameraPermissionState =
+        rememberPermissionState(permission = Manifest.permission.CAMERA)
+
+    val openPhoneCallPermissionState =
+        rememberPermissionState(permission = Manifest.permission.CALL_PHONE)
+
 
     val startRequestingHelp = remember {
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationPermissionState.requestPermission(onGranted = {
                     notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }, onExplain = {
-                    notificationPermissionDialogVisibility(true)
                 }, onDenied = {
                     onRequestHelp()
                 })
@@ -383,8 +388,6 @@ fun MappingScreen(
 
                     }
 
-                }, onExplain = {
-                    uiState = uiState.copy(locationPermissionDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
@@ -675,8 +678,6 @@ fun MappingScreen(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationPermissionState.requestPermission(onGranted = {
                     notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }, onExplain = {
-                    notificationPermissionDialogVisibility(true)
                 }, onDenied = {
                     respondToHelp()
                 })
@@ -790,17 +791,10 @@ fun MappingScreen(
         }
     }
 
-    val openPhoneCallPermissionState =
-        rememberPermissionState(permission = Manifest.permission.CALL_PHONE) { permissionGranted ->
-            if (permissionGranted) {
-                uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }
-                    ?.let { callPhoneNumber(it) }
-            }
-        }
 
     val onEmergencyCall = remember {
         { phoneNumber: String ->
-            if (!openPhoneCallPermissionState.status.isGranted) {
+            if (!openPhoneCallPermissionState.hasPermission) {
                 uiState = uiState.copy(selectedPhoneNumber = phoneNumber)
                 openPhoneCallPermissionState.launchPermissionRequest()
             } else {
@@ -1016,7 +1010,7 @@ fun MappingScreen(
     }
 
     fun notifyNewRescueRequest(message: String) {
-        if (notificationPermissionState.status.isGranted && !AppUtils.isAppInForeground(context = context)) {
+        if (notificationPermissionState.hasPermission && !AppUtils.isAppInForeground(context = context)) {
             mappingViewModel.onEvent(
                 event = MappingVmEvent.NotifyNewRescueRequest(
                     message = message
@@ -1025,7 +1019,7 @@ fun MappingScreen(
     }
 
     fun notifyRequestAccepted(message: String) {
-        if (notificationPermissionState.status.isGranted && !AppUtils.isAppInForeground(context = context)) {
+        if (notificationPermissionState.hasPermission && !AppUtils.isAppInForeground(context = context)) {
             mappingViewModel.onEvent(
                 event = MappingVmEvent.NotifyRequestAccepted(
                     message = message
@@ -1132,24 +1126,7 @@ fun MappingScreen(
 
         }
 
-    val filesAndMediaPermissionState =
-        rememberMultiplePermissionsState(
-            permissions = listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
-            if (permissionGranted.values.all { it }) {
-                openGalleryResultLauncher.launch("image/*")
-            }
-        }
 
-
-    val openCameraPermissionState =
-        rememberPermissionState(permission = Manifest.permission.CAMERA) { permissionGranted ->
-
-            if (permissionGranted) {
-                openCameraResultLauncher.launch()
-            }
-        }
 
     val openGallery = remember {
         {
@@ -1157,8 +1134,6 @@ fun MappingScreen(
                 onGranted = {
                     accessPhotoDialog(false)
                     openGalleryResultLauncher.launch("image/*")
-                }, onExplain = {
-                    uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true)
                 })
@@ -1172,8 +1147,6 @@ fun MappingScreen(
                 onGranted = {
                     accessPhotoDialog(false)
                     openCameraResultLauncher.launch()
-                }, onExplain = {
-                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(cameraPermissionDialogVisible = true)
                 })
@@ -1615,6 +1588,43 @@ fun MappingScreen(
     }
 
 
+
+    LaunchedEffect(key1 = notificationPermissionState.isGranted()){
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU){
+            return@LaunchedEffect
+        }
+
+        if(!notificationPermissionState.isGranted()){
+            return@LaunchedEffect
+        }
+
+        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+    
+    LaunchedEffect(key1 = filesAndMediaPermissionState.isGranted()){
+        if(!filesAndMediaPermissionState.isGranted()){
+            return@LaunchedEffect
+        }
+        openGalleryResultLauncher.launch("image/*")
+    }
+
+    LaunchedEffect(key1 = openCameraPermissionState.isGranted()){
+        if(!openCameraPermissionState.isGranted()){
+            return@LaunchedEffect
+        }
+
+        openCameraResultLauncher.launch()
+    }
+
+    LaunchedEffect(key1 = openPhoneCallPermissionState.isGranted()){
+        if(!openPhoneCallPermissionState.isGranted()){
+            return@LaunchedEffect
+        }
+
+        uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }
+            ?.let { callPhoneNumber(it) }
+    }
 
 
     LaunchedEffect(

@@ -246,7 +246,7 @@ dependencies {
 
 
     //permissions
-    implementation("com.google.accompanist:accompanist-permissions:0.31.3-beta")
+    implementation("com.google.accompanist:accompanist-permissions:0.21.1-beta")
 
     //animatedNavHost
     implementation("com.google.accompanist:accompanist-navigation-animation:0.31.4-beta")

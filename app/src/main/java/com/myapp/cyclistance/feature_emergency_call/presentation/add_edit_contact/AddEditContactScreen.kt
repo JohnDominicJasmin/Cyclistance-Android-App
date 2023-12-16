@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.myapp.cyclistance.core.utils.permissions.isGranted
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.core.utils.save_images.ImageUtils
 import com.myapp.cyclistance.core.utils.save_images.ImageUtils.toImageUri
@@ -132,28 +133,17 @@ fun AddEditContactScreen(
         rememberMultiplePermissionsState(
             permissions = listOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
-            if (permissionGranted.values.all { it }) {
-                openGalleryResultLauncher.launch("image/*")
-            }
-        }
+                Manifest.permission.WRITE_EXTERNAL_STORAGE))
 
 
     val openCameraPermissionState =
-        rememberPermissionState(permission = Manifest.permission.CAMERA) { permissionGranted ->
-
-            if (permissionGranted) {
-                openCameraResultLauncher.launch()
-            }
-        }
+        rememberPermissionState(permission = Manifest.permission.CAMERA)
 
     val openGallery = remember {
         {
             filesAndMediaPermissionState.requestPermission(
                 onGranted = {
                     openGalleryResultLauncher.launch("image/*")
-                }, onExplain = {
-                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(filesAndMediaDialogVisible = true)
                 })
@@ -166,8 +156,6 @@ fun AddEditContactScreen(
             openCameraPermissionState.requestPermission(
                 onGranted = {
                     openCameraResultLauncher.launch()
-                }, onExplain = {
-                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(cameraPermissionDialogVisible = true)
                 })
@@ -251,6 +239,18 @@ fun AddEditContactScreen(
                 phoneNumberErrorMessage = "")
 
 
+        }
+    }
+
+    LaunchedEffect(key1 = filesAndMediaPermissionState.isGranted()){
+        if(filesAndMediaPermissionState.isGranted()){
+            openGalleryResultLauncher.launch("image/*")
+        }
+    }
+
+    LaunchedEffect(key1 = openCameraPermissionState.isGranted()){
+        if(openCameraPermissionState.isGranted()){
+            openCameraResultLauncher.launch()
         }
     }
 
