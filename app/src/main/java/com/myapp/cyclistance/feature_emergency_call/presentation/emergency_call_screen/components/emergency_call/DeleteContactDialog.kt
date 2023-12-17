@@ -9,17 +9,17 @@ import com.myapp.cyclistance.theme.CyclistanceTheme
 @Composable
 fun DeleteContactDialog(
     modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
     onClickConfirmButton: () -> Unit,
     nameToDelete: String) {
 
 
     YesNoDialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismiss,
         modifier = modifier,
         message = "Are you sure you want to delete\n" +
                   "“$nameToDelete”?",
-        onClickNegativeButton = onDismissRequest,
+        onClickNegativeButton = onDismiss,
         onClickPositiveButton = onClickConfirmButton,
         )
 
@@ -30,7 +30,7 @@ fun DeleteContactDialog(
 fun PreviewEmergencyCallDeleteDialog() {
     CyclistanceTheme(darkTheme = true) {
         DeleteContactDialog(
-            onDismissRequest = {},
+            onDismiss = {},
             onClickConfirmButton = {},
             nameToDelete = "Philippine Red Cross")
     }

@@ -12,9 +12,8 @@ inline fun MultiplePermissionsState.requestPermission(
 
     when{
         allPermissionsGranted -> onGranted()
-        shouldShowRationale -> launchMultiplePermissionRequest()
-        isPermanentlyDenied() -> onDenied()
-        else -> launchMultiplePermissionRequest()
+        shouldShowRationale || !isPermanentlyDenied() -> launchMultiplePermissionRequest()
+        else -> onDenied()
 
 
     }
@@ -32,9 +31,8 @@ inline fun PermissionState.requestPermission(
     when{
 
         hasPermission -> onGranted()
-        shouldShowRationale -> launchPermissionRequest()
-        isPermanentlyDenied() -> onDenied()
-        else -> launchPermissionRequest()
+        shouldShowRationale || !isPermanentlyDenied() -> launchPermissionRequest()
+        else -> onDenied()
 
     }
 

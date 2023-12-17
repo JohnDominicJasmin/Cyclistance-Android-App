@@ -137,6 +137,7 @@ fun ConversationScreen(
             notificationPermissionState.requestPermission(onGranted = {
                 notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }, onDenied = {
+                notificationPermissionDialogVisibility(true)
                 sendMessage(messageInput.text)
             })
         } else {

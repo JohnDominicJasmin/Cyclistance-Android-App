@@ -48,6 +48,7 @@ sealed class MappingUiEvent {
     data object OnConfirmDeleteIncident : MappingUiEvent()
     data object OnClickHazardousInfoGotIt : MappingUiEvent()
     data object DismissIncidentDescriptionBottomSheet : MappingUiEvent()
+    data object DismissCallPhonePermissionDialog : MappingUiEvent()
 
     data object RescueRequestAccepted : MappingUiEvent()
     data object CancelOnGoingRescue : MappingUiEvent()
