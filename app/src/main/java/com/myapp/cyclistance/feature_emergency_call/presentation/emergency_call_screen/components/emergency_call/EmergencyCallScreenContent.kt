@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.myapp.cyclistance.R
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
 import com.myapp.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
+import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
 import com.myapp.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.myapp.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.myapp.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
@@ -57,12 +58,21 @@ fun EmergencyCallScreenContent(
 
             if (uiState.deleteDialogVisible) {
                 DeleteContactDialog(
-                    onDismissRequest = { event(EmergencyCallUiEvent.DismissDeleteContactDialog) },
+                    onDismiss = { event(EmergencyCallUiEvent.DismissDeleteContactDialog) },
                     onClickConfirmButton = {
                         event(EmergencyCallUiEvent.DeleteContact(uiState.contactToDelete))
                         event(EmergencyCallUiEvent.DismissDeleteContactDialog)
                     },
                     nameToDelete = uiState.contactToDelete.name
+                )
+            }
+
+            if(uiState.callPhonePermissionDialogVisible){
+                DialogPhonePermission(
+                    modifier = Modifier,
+                    onDismiss = {
+                        event(EmergencyCallUiEvent.DismissCallPhonePermissionDialog)
+                    }
                 )
             }
 

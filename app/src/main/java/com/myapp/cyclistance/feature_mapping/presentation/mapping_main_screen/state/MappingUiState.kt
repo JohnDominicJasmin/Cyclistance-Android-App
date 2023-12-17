@@ -26,6 +26,7 @@ data class MappingUiState(
     val isRescueRequestDialogVisible: Boolean = false,
     val isEmergencyCallDialogVisible: Boolean = false,
     val selectedPhoneNumber: String = "",
+    val callPhonePermissionDialogVisible: Boolean = false,
     val lastLongPressedLocation: LatLng? = null,
     val selectedIncidentLabel: String = "",
     val selectedHazardousMarker: HazardousLaneMarkerDetails? = HazardousLaneMarkerDetails(),

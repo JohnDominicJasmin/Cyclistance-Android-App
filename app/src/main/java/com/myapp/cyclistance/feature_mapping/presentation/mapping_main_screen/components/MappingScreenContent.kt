@@ -39,6 +39,7 @@ import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.Dialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
+import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
 import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.myapp.cyclistance.feature_authentication.presentation.common.visible
@@ -140,6 +141,15 @@ fun MappingScreenContent(
                     mappingState = state,
                     uiState = uiState,
                     event = event
+                )
+            }
+
+            if(uiState.callPhonePermissionDialogVisible){
+                DialogPhonePermission(
+                    modifier = Modifier,
+                    onDismiss = {
+                        event(MappingUiEvent.DismissCallPhonePermissionDialog)
+                    }
                 )
             }
 

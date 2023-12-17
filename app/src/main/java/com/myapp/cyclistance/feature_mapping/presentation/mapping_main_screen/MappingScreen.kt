@@ -794,12 +794,14 @@ fun MappingScreen(
 
     val onEmergencyCall = remember {
         { phoneNumber: String ->
-            if (!openPhoneCallPermissionState.hasPermission) {
-                uiState = uiState.copy(selectedPhoneNumber = phoneNumber)
-                openPhoneCallPermissionState.launchPermissionRequest()
-            } else {
+
+            openCameraPermissionState.requestPermission(onGranted = {
                 callPhoneNumber(phoneNumber)
-            }
+            }, onDenied = {
+                uiState = uiState.copy(
+                    selectedPhoneNumber = phoneNumber,
+                    callPhonePermissionDialogVisible = true)
+            })
         }
     }
 
@@ -1191,6 +1193,12 @@ fun MappingScreen(
         uiState = uiState.copy(
             incidentImageUri = null,
             incidentImageErrorMessage = ""
+        )
+    }}
+
+    val dismissCallPhonePermissionDialog = remember{{
+        uiState = uiState.copy(
+            callPhonePermissionDialogVisible = false
         )
     }}
 
@@ -1800,6 +1808,7 @@ fun MappingScreen(
                 is MappingUiEvent.IncidentDescriptionDialog -> incidentDescriptionDialog(event.visibility)
                 is MappingUiEvent.ReportIncidentDialog -> reportIncidentDialog(event.visibility)
                 MappingUiEvent.ResetIncidentReport -> removeIncidentImage()
+                MappingUiEvent.DismissCallPhonePermissionDialog -> dismissCallPhonePermissionDialog()
             }
         }
     )
