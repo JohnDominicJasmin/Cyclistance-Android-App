@@ -45,7 +45,8 @@ fun EmergencyCallScreenContent(
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        Box {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter){
+
 
             if (uiState.maximumContactDialogVisible) {
                 AlertDialog(

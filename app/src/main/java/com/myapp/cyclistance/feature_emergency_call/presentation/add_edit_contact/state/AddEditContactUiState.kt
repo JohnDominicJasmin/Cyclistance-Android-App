@@ -10,8 +10,9 @@ data class AddEditContactUiState(
     val selectedImageUri: String? = null,
     val nameErrorMessage: String = "",
     val phoneNumberErrorMessage: String = "",
-
     val cameraPermissionDialogVisible: Boolean = false,
-    val filesAndMediaDialogVisible: Boolean = false,
+    val filesAndMediaPermissionDialogVisible: Boolean = false,
+    val prominentCameraDialogVisible: Boolean = false,
+    val prominentGalleryDialogVisible: Boolean = false,
 ) : Parcelable
 
