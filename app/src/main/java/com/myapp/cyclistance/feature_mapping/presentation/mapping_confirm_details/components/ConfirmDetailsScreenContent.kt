@@ -29,6 +29,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.myapp.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogBackgroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessLocationDialog
 import com.myapp.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.myapp.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent
@@ -236,6 +237,20 @@ fun ConfirmDetailsContent(
                         }
                     )
                 }
+
+                if(uiState.prominentLocationDialogVisible){
+                    AccessLocationDialog(onDismissRequest = {
+                        event(ConfirmDetailsUiEvent.DismissProminentLocationDialog)
+                    }, onDeny = {
+                        event(ConfirmDetailsUiEvent.DismissProminentLocationDialog)
+                    }, onAllow = {
+                        event(ConfirmDetailsUiEvent.DismissProminentLocationDialog)
+                        event(ConfirmDetailsUiEvent.AllowProminentLocationDialog)
+                    })
+                }
+
+
+
             }
 
         }

@@ -17,4 +17,5 @@ data class ConfirmDetailsUiState(
     val alertDialogState: AlertDialogState = AlertDialogState(),
     val backgroundLocationPermissionDialogVisible: Boolean = false,
     val foregroundLocationPermissionDialogVisible: Boolean = false,
+    val prominentLocationDialogVisible: Boolean = false,
 ):Parcelable
