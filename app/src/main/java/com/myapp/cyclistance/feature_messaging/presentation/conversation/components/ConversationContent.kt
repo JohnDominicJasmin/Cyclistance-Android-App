@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessNotificationDialog
 import com.myapp.cyclistance.core.utils.composable_utils.Keyboard
 import com.myapp.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.myapp.cyclistance.core.utils.composable_utils.noRippleClickable
@@ -62,7 +63,6 @@ fun ConversationContent(
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
     val scope = rememberCoroutineScope()
-
 
 
     val stateFirstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
@@ -114,6 +114,17 @@ fun ConversationContent(
                     modifier = Modifier.align(Alignment.Center),
                     onDismiss = { event(ConversationUiEvent.DismissNotificationPermissionDialog) }
                 )
+            }
+
+            if (uiState.prominentNotificationDialogVisible) {
+                AccessNotificationDialog(onDismissRequest = {
+                    event(ConversationUiEvent.DismissProminentNotificationDialog)
+                }, onDeny = {
+                    event(ConversationUiEvent.DismissProminentNotificationDialog)
+                }, onAllow = {
+                    event(ConversationUiEvent.DismissProminentNotificationDialog)
+                    event(ConversationUiEvent.AllowProminentNotificationDialog)
+                })
             }
 
             Box(
@@ -217,7 +228,7 @@ private val fakeConversationsModel = ConversationsModel(
             isSent = true,
             isSeen = false
 
-            ),
+        ),
         ConversationItemModel(
             messageId = "13",
             senderId = "2",
@@ -273,9 +284,9 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                    "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                    "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                    "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                      "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                      "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                      "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
             isSent = true,
             isSeen = false,
@@ -346,9 +357,9 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                    "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                    "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                    "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                      "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                      "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                      "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
             isSent = true,
             isSeen = false,
@@ -359,9 +370,9 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                    "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                    "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                    "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                      "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                      "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                      "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
             isSent = true,
             isSeen = false,
