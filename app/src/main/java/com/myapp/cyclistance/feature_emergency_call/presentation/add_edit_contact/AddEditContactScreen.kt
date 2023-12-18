@@ -252,7 +252,6 @@ fun AddEditContactScreen(
     }}
 
     val allowProminentCameraDialog = remember{{
-        dismissProminentCameraDialog()
         openCameraPermissionState.requestPermission(onGranted = {
             openCameraResultLauncher.launch()
         }, onDenied = {
@@ -261,7 +260,6 @@ fun AddEditContactScreen(
     }}
 
     val allowProminentGalleryDialog = remember{{
-        dismissProminentGalleryDialog()
         galleryPermissionState.requestPermission(onGranted = {
             openGalleryResultLauncher.launch("image/*")
         }, onDenied = {

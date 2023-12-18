@@ -154,6 +154,7 @@ fun AddEditContactContent(
                     }, onDeny = {
                         event(AddEditContactUiEvent.DismissProminentGalleryDialog)
                     }, onAllow = {
+                        event(AddEditContactUiEvent.DismissProminentGalleryDialog)
                         event(AddEditContactUiEvent.AllowProminentGalleryDialog)
                     })
                 }
@@ -165,6 +166,7 @@ fun AddEditContactContent(
                     }, onDeny = {
                         event(AddEditContactUiEvent.DismissCameraDialog)
                     }, onAllow = {
+                        event(AddEditContactUiEvent.DismissCameraDialog)
                         event(AddEditContactUiEvent.AllowProminentCameraDialog)
                     })
                 }
