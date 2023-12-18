@@ -22,6 +22,7 @@ import com.myapp.cyclistance.R
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
 import com.myapp.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessPhoneCallDialog
 import com.myapp.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.myapp.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.myapp.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
@@ -68,13 +69,26 @@ fun EmergencyCallScreenContent(
                 )
             }
 
-            if(uiState.callPhonePermissionDialogVisible){
+            if (uiState.callPhonePermissionDialogVisible) {
                 DialogPhonePermission(
                     modifier = Modifier,
                     onDismiss = {
                         event(EmergencyCallUiEvent.DismissCallPhonePermissionDialog)
                     }
                 )
+            }
+            if (uiState.prominentCallPhoneDialogVisible) {
+                AccessPhoneCallDialog(
+                    onDismissRequest = {
+                        event(EmergencyCallUiEvent.DismissProminentPhoneCallDialog)
+                    },
+                    onDeny = {
+                        event(EmergencyCallUiEvent.DismissProminentPhoneCallDialog)
+                    },
+                    onAllow = {
+                        event(EmergencyCallUiEvent.DismissProminentPhoneCallDialog)
+                        event(EmergencyCallUiEvent.AllowProminentPhoneCallDialog)
+                    })
             }
 
 
@@ -176,9 +190,10 @@ private val fakeContacts = EmergencyCallModel(
 fun PreviewEmergencyCallScreenContent1() {
 
     val uiState by rememberSaveable {
-        mutableStateOf(EmergencyCallUIState(
+        mutableStateOf(
+            EmergencyCallUIState(
 
-        ))
+            ))
     }
     CyclistanceTheme(darkTheme = true) {
         EmergencyCallScreenContent(
@@ -224,6 +239,6 @@ fun PreviewEmergencyCallScreenContent3() {
             state = EmergencyCallState(
                 emergencyCallModel = EmergencyCallModel()
             ),
-            event = {} )
+            event = {})
     }
 }
