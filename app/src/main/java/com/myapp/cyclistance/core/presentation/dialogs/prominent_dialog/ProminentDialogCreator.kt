@@ -70,7 +70,10 @@ fun ProminentDialogCreator(
 
 
                     Row {
-                        IconButton(onClick = onDismissRequest, modifier = Modifier) {
+                        IconButton(onClick = {
+                            onDismissRequest()
+                            onDialogVisibilityToggle(false)
+                        }, modifier = Modifier) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Close Dialog",
