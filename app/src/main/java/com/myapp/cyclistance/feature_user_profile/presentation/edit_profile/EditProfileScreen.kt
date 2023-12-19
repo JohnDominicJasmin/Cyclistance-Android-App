@@ -128,7 +128,7 @@ fun EditProfileScreen(
         }
 
 
-    val filesAndMediaPermissionState =
+    val galleryPermissionState =
         rememberMultiplePermissionsState(
             permissions = listOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -138,8 +138,8 @@ fun EditProfileScreen(
     val openCameraPermissionState =
         rememberPermissionState(permission = Manifest.permission.CAMERA)
 
-    LaunchedEffect(key1 = filesAndMediaPermissionState.isGranted()){
-        if(filesAndMediaPermissionState.isGranted()){
+    LaunchedEffect(key1 = galleryPermissionState.isGranted()){
+        if(galleryPermissionState.isGranted()){
             openGalleryResultLauncher.launch("image/*")
         }
     }
@@ -218,27 +218,27 @@ fun EditProfileScreen(
 
     val openGallery = remember {
         {
-            filesAndMediaPermissionState.requestPermission(
-                onGranted = {
-                    openGalleryResultLauncher.launch("image/*")
-                }, onDenied = {
-                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
-                })
-
+            if(galleryPermissionState.allPermissionsGranted){
+                openGalleryResultLauncher.launch("image/*")
+            }else{
+                uiState = uiState.copy(prominentGalleryDialogVisible = true)
+            }
         }
     }
+
+
 
     val openCamera = remember {
         {
-            openCameraPermissionState.requestPermission(
-                onGranted = {
-                    openCameraResultLauncher.launch()
-                }, onDenied = {
-                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
-                })
+
+            if(openCameraPermissionState.hasPermission){
+                openCameraResultLauncher.launch()
+            }else{
+                uiState = uiState.copy(prominentCameraDialogVisible = true)
+            }
+
         }
     }
-
     val onValueChangeName = remember {
         { input: TextFieldValue ->
             name = input
@@ -295,6 +295,29 @@ fun EditProfileScreen(
             uiState = uiState.copy(noInternetVisible = false)
         }
     }
+    val dismissProminentCameraDialog = remember{{
+        uiState = uiState.copy(prominentCameraDialogVisible = false)
+    }}
+
+    val dismissProminentGalleryDialog = remember{{
+        uiState = uiState.copy(prominentGalleryDialogVisible = false)
+    }}
+
+    val allowProminentCameraDialog = remember{{
+        openCameraPermissionState.requestPermission(onGranted = {
+            openCameraResultLauncher.launch()
+        }, onDenied = {
+            uiState = uiState.copy(cameraPermissionDialogVisible = true)
+        })
+    }}
+
+    val allowProminentGalleryDialog = remember{{
+        galleryPermissionState.requestPermission(onGranted = {
+            openGalleryResultLauncher.launch("image/*")
+        }, onDenied = {
+            uiState = uiState.copy(filesAndMediaDialogVisible = true)
+        })
+    }}
 
     EditProfileScreenContent(
         modifier = Modifier
@@ -322,6 +345,10 @@ fun EditProfileScreen(
                 is EditProfileUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
                 is EditProfileUiEvent.OnChangeAddress -> onValueChangeAddress(event.address)
                 is EditProfileUiEvent.OnChangeCyclingGroup -> onValueChangeCyclingGroup(event.cyclingGroup)
+                EditProfileUiEvent.AllowProminentCameraDialog -> allowProminentCameraDialog()
+                EditProfileUiEvent.AllowProminentGalleryDialog -> allowProminentGalleryDialog()
+                EditProfileUiEvent.DismissProminentCameraDialog -> dismissProminentCameraDialog()
+                EditProfileUiEvent.DismissProminentGalleryDialog -> dismissProminentGalleryDialog()
             }
         },
         uiState = uiState,

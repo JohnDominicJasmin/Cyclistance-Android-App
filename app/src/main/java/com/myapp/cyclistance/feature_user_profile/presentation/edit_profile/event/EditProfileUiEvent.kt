@@ -14,6 +14,10 @@ sealed class EditProfileUiEvent {
     data object ToggleBottomSheet : EditProfileUiEvent()
     data object DismissFilesAndMediaDialog : EditProfileUiEvent()
     data object DismissCameraDialog : EditProfileUiEvent()
+    data object AllowProminentCameraDialog : EditProfileUiEvent()
+    data object AllowProminentGalleryDialog : EditProfileUiEvent()
+    data object DismissProminentCameraDialog : EditProfileUiEvent()
+    data object DismissProminentGalleryDialog : EditProfileUiEvent()
 
 
 }

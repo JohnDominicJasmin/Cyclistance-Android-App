@@ -16,4 +16,6 @@ data class EditProfileUiState(
     val noInternetVisible: Boolean = false,
     val cameraPermissionDialogVisible: Boolean = false,
     val filesAndMediaDialogVisible: Boolean = false,
+    val prominentGalleryDialogVisible: Boolean = false,
+    val prominentCameraDialogVisible: Boolean = false,
 ):Parcelable
