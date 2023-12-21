@@ -40,6 +40,11 @@ import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.Dialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessCameraDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessGalleryDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessLocationDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessNotificationDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessPhoneCallDialog
 import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.myapp.cyclistance.feature_authentication.presentation.common.visible
@@ -463,9 +468,79 @@ fun MappingScreenContent(
                         )
                     }
 
-                    if(uiState.filesAndMediaPermissionDialogVisible){
+                    if (uiState.prominentPhoneCallDialogVisible) {
+
+                        AccessPhoneCallDialog(
+                            onDismissRequest = {
+                                event(MappingUiEvent.DismissProminentPhoneCallDialog)
+                            },
+                            onDeny = {
+                                event(MappingUiEvent.DismissProminentPhoneCallDialog)
+                            },
+                            onAllow = {
+                                event(MappingUiEvent.DismissProminentPhoneCallDialog)
+                                event(MappingUiEvent.AllowProminentPhoneCallDialog)
+                            })
+                    }
+
+                    if (uiState.prominentGalleryDialogVisible) {
+
+                        AccessGalleryDialog(onDismissRequest = {
+                            event(MappingUiEvent.DismissProminentGalleryDialog)
+                        }, onDeny = {
+                            event(MappingUiEvent.DismissProminentGalleryDialog)
+                        }, onAllow = {
+                            event(MappingUiEvent.DismissProminentGalleryDialog)
+                            event(MappingUiEvent.AllowProminentGalleryDialog)
+                        })
+                    }
+
+                    if (uiState.prominentCameraDialogVisible) {
+
+                        AccessCameraDialog(onDismissRequest = {
+                            event(MappingUiEvent.DismissProminentCameraDialog)
+                        }, onDeny = {
+                            event(MappingUiEvent.DismissProminentCameraDialog)
+                        }, onAllow = {
+                            event(MappingUiEvent.DismissProminentCameraDialog)
+                            event(MappingUiEvent.AllowProminentCameraDialog)
+                        })
+                    }
+
+                    if (uiState.prominentLocationDialogVisible) {
+
+                        AccessLocationDialog(
+                            onDismissRequest = {
+                                event(MappingUiEvent.DismissProminentLocationDialog)
+                            },
+                            onDeny = {
+                                event(MappingUiEvent.DismissProminentLocationDialog)
+                                     },
+                            onAllow = {
+                                event(MappingUiEvent.DismissProminentLocationDialog)
+                                event(MappingUiEvent.AllowProminentLocationDialog)
+                            })
+
+                    }
+
+                    if (uiState.prominentNotificationDialogVisible) {
+
+                        AccessNotificationDialog(
+                            onDismissRequest = {
+                                event(MappingUiEvent.DismissProminentNotificationDialog)
+                            },
+                            onDeny = {
+                                event(MappingUiEvent.DismissProminentNotificationDialog)
+                            },
+                            onAllow = {
+                                event(MappingUiEvent.DismissProminentNotificationDialog)
+                                event(MappingUiEvent.AllowProminentNotificationDialog)
+                            })
+                    }
+
+                    if (uiState.filesAndMediaPermissionDialogVisible) {
                         DialogFilesAndMediaPermission(
-                            modifier = Modifier.constrainAs(dialog){
+                            modifier = Modifier.constrainAs(dialog) {
                                 end.linkTo(parent.end)
                                 start.linkTo(parent.start)
                                 bottom.linkTo(parent.bottom)

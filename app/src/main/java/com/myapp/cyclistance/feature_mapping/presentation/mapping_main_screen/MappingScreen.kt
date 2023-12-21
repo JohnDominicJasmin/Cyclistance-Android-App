@@ -179,6 +179,32 @@ fun MappingScreen(
         }
     }
 
+    val notificationPermissionState = rememberPermissionState(
+        permission = Manifest.permission.POST_NOTIFICATIONS
+    )
+
+    val galleryPermissionState =
+        rememberMultiplePermissionsState(
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                listOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                )
+            }else{
+                listOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
+)
+
+
+    val openCameraPermissionState =
+        rememberPermissionState(permission = Manifest.permission.CAMERA)
+
+    val openPhoneCallPermissionState =
+        rememberPermissionState(permission = Manifest.permission.CALL_PHONE)
+
     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -255,13 +281,12 @@ fun MappingScreen(
 
     val onRequestHelp = remember {
         {
-            foregroundLocationPermissionsState.requestPermission(
-                onGranted = {
-                    context.startLocationServiceIntentAction()
-                    requestHelp()
-                }, onDenied = {
-                    uiState = uiState.copy(locationPermissionDialogVisible = true)
-                })
+            if(foregroundLocationPermissionsState.allPermissionsGranted){
+                context.startLocationServiceIntentAction()
+                requestHelp()
+            }else{
+                uiState = uiState.copy(prominentLocationDialogVisible = true)
+            }
         }
     }
 
@@ -293,36 +318,17 @@ fun MappingScreen(
             }
         }
     )
-    val notificationPermissionState = rememberPermissionState(
-        permission = Manifest.permission.POST_NOTIFICATIONS
-    )
 
-    val filesAndMediaPermissionState =
-        rememberMultiplePermissionsState(
-            permissions = listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE))
+    fun startRequestingHelp(){
 
-
-    val openCameraPermissionState =
-        rememberPermissionState(permission = Manifest.permission.CAMERA)
-
-    val openPhoneCallPermissionState =
-        rememberPermissionState(permission = Manifest.permission.CALL_PHONE)
-
-
-    val startRequestingHelp = remember {
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                notificationPermissionState.requestPermission(onGranted = {
-                    notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }, onDenied = {
-                    onRequestHelp()
-                })
-            } else {
-                onRequestHelp()
-            }
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+            onRequestHelp()
+            return
         }
+
+        uiState = uiState.copy(
+            prominentNotificationDialogVisible = !notificationPermissionState.isGranted())
+
     }
 
 
@@ -366,33 +372,35 @@ fun MappingScreen(
     }
 
 
-    val onLocateUser = remember(uiState.routeDirection, mapboxMap) {
-        {
-
-            foregroundLocationPermissionsState.requestPermission(
-                onGranted = {
-                    if (!context.hasGPSConnection()) {
-                        context.checkLocationSetting(
-                            onDisabled = settingResultRequest::launch)
-                    }
-
-
-                    state.userLocation?.let {
-                        it.latitude ?: return@let
-                        it.longitude ?: return@let
-                        val point = LatLng(it.latitude, it.longitude)
-                        locateUser(
-                            LOCATE_USER_ZOOM_LEVEL,
-                            point,
-                            DEFAULT_CAMERA_ANIMATION_DURATION)
-
-                    }
-
-                }, onDenied = {
-                    uiState = uiState.copy(locationPermissionDialogVisible = true)
-                })
+    val zoomUserLocation = remember{{
+        if (!context.hasGPSConnection()) {
+            context.checkLocationSetting(
+                onDisabled = settingResultRequest::launch)
         }
-    }
+
+
+        state.userLocation?.let {
+            it.latitude ?: return@let
+            it.longitude ?: return@let
+            val point = LatLng(it.latitude, it.longitude)
+            locateUser(
+                LOCATE_USER_ZOOM_LEVEL,
+                point,
+                DEFAULT_CAMERA_ANIMATION_DURATION)
+
+        }
+    }}
+
+
+    val onLocateUser = remember(uiState.routeDirection, mapboxMap) {{
+
+        if (foregroundLocationPermissionsState.allPermissionsGranted) {
+            zoomUserLocation()
+        } else {
+            uiState = uiState.copy(prominentLocationDialogVisible = true)
+        }
+
+    }}
 
     val changeCameraMode = remember(mapboxMap) {
         { mode: Int ->
@@ -673,18 +681,17 @@ fun MappingScreen(
     }
 
 
-    val startRespondingToHelp = remember {
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                notificationPermissionState.requestPermission(onGranted = {
-                    notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }, onDenied = {
-                    respondToHelp()
-                })
-            } else {
-                respondToHelp()
-            }
+    fun startRespondingToHelp(){
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            respondToHelp()
+            return
+
         }
+
+        uiState = uiState.copy(
+            prominentNotificationDialogVisible = !notificationPermissionState.isGranted())
+
     }
 
 
@@ -795,13 +802,14 @@ fun MappingScreen(
     val onEmergencyCall = remember {
         { phoneNumber: String ->
 
-            openCameraPermissionState.requestPermission(onGranted = {
+            if (openPhoneCallPermissionState.hasPermission) {
                 callPhoneNumber(phoneNumber)
-            }, onDenied = {
+            } else {
                 uiState = uiState.copy(
                     selectedPhoneNumber = phoneNumber,
-                    callPhonePermissionDialogVisible = true)
-            })
+                    prominentPhoneCallDialogVisible = true)
+            }
+
         }
     }
 
@@ -1130,28 +1138,25 @@ fun MappingScreen(
 
 
 
-    val openGallery = remember {
-        {
-            filesAndMediaPermissionState.requestPermission(
-                onGranted = {
-                    accessPhotoDialog(false)
-                    openGalleryResultLauncher.launch("image/*")
-                }, onDenied = {
-                    uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true)
-                })
+    val openGallery = remember {{
 
+        if(galleryPermissionState.allPermissionsGranted){
+            accessPhotoDialog(false)
+            openGalleryResultLauncher.launch("image/*")
+        }else{
+            uiState = uiState.copy(prominentGalleryDialogVisible = true)
         }
-    }
 
-    val openCamera = remember {
-        {
-            openCameraPermissionState.requestPermission(
-                onGranted = {
-                    accessPhotoDialog(false)
-                    openCameraResultLauncher.launch()
-                }, onDenied = {
-                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
-                })
+
+    }}
+
+    val openCamera = remember {{
+            if(openCameraPermissionState.hasPermission){
+                accessPhotoDialog(false)
+                openCameraResultLauncher.launch()
+            }else{
+                uiState = uiState.copy(prominentCameraDialogVisible = true)
+            }
         }
     }
 
@@ -1202,6 +1207,76 @@ fun MappingScreen(
         )
     }}
 
+    val allowProminentNotificationDialog = remember {{
+        notificationPermissionState.requestPermission(onGranted = {
+            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }, onDenied = {
+            notificationPermissionDialogVisibility(true)
+        })
+    }}
+
+    val dismissProminentNotificationDialog = remember{{
+        uiState = uiState.copy(
+            prominentNotificationDialogVisible = false
+        )
+    }}
+
+    val allowProminentCameraDialog = remember{{
+        openCameraPermissionState.requestPermission(onGranted = {
+            openCameraResultLauncher.launch()
+        }, onDenied = {
+            uiState = uiState.copy(cameraPermissionDialogVisible = true, incidentImageUri = null)
+        })
+    }}
+
+
+    val dismissProminentCameraDialog = remember{{
+        uiState = uiState.copy(
+            prominentCameraDialogVisible = false
+        )
+    }}
+
+    val allowProminentGalleryDialog = remember{{
+        galleryPermissionState.requestPermission(onGranted = {
+            openGalleryResultLauncher.launch("image/*")
+        }, onDenied = {
+            uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true, incidentImageUri = null)
+        })
+    }}
+
+    val dismissProminentGalleryDialog = remember{{
+        uiState = uiState.copy(
+            prominentGalleryDialogVisible = false
+        )
+    }}
+
+    val allowProminentLocationDialog = remember{{
+        foregroundLocationPermissionsState.requestPermission(onGranted = {
+            onLocateUser()
+        }, onDenied = {
+            uiState = uiState.copy(locationPermissionDialogVisible = true)
+        })
+    }}
+
+    val dismissProminentLocationDialog = remember{{
+        uiState = uiState.copy(
+            prominentLocationDialogVisible = false
+        )
+    }}
+
+    val allowProminentPhoneCallDialog = remember{{
+        openPhoneCallPermissionState.requestPermission(onGranted = {
+            callPhoneNumber(uiState.selectedPhoneNumber!!)
+        }, onDenied = {
+            uiState = uiState.copy(callPhonePermissionDialogVisible = true)
+        })
+    }}
+
+    val dismissProminentPhoneCallDialog = remember{{
+        uiState = uiState.copy(
+            prominentPhoneCallDialogVisible = false
+        )
+    }}
 
     DisposableEffect(key1 = Unit) {
         val window = context.findActivity()?.window
@@ -1599,7 +1674,7 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = notificationPermissionState.isGranted()){
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU){
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
             return@LaunchedEffect
         }
 
@@ -1610,8 +1685,8 @@ fun MappingScreen(
         notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
     
-    LaunchedEffect(key1 = filesAndMediaPermissionState.isGranted()){
-        if(!filesAndMediaPermissionState.isGranted()){
+    LaunchedEffect(key1 = galleryPermissionState.isGranted()){
+        if(!galleryPermissionState.isGranted()){
             return@LaunchedEffect
         }
         openGalleryResultLauncher.launch("image/*")
@@ -1809,6 +1884,21 @@ fun MappingScreen(
                 is MappingUiEvent.ReportIncidentDialog -> reportIncidentDialog(event.visibility)
                 MappingUiEvent.ResetIncidentReport -> removeIncidentImage()
                 MappingUiEvent.DismissCallPhonePermissionDialog -> dismissCallPhonePermissionDialog()
+
+                MappingUiEvent.AllowProminentNotificationDialog -> allowProminentNotificationDialog()
+                MappingUiEvent.DismissProminentNotificationDialog -> dismissProminentNotificationDialog()
+
+                MappingUiEvent.AllowProminentCameraDialog -> allowProminentCameraDialog()
+                MappingUiEvent.DismissProminentCameraDialog -> dismissProminentCameraDialog()
+
+                MappingUiEvent.AllowProminentGalleryDialog -> allowProminentGalleryDialog()
+                MappingUiEvent.DismissProminentGalleryDialog -> dismissProminentGalleryDialog()
+
+                MappingUiEvent.AllowProminentLocationDialog -> allowProminentLocationDialog()
+                MappingUiEvent.DismissProminentLocationDialog -> dismissProminentLocationDialog()
+
+                MappingUiEvent.AllowProminentPhoneCallDialog -> allowProminentPhoneCallDialog()
+                MappingUiEvent.DismissProminentPhoneCallDialog -> dismissProminentPhoneCallDialog()
             }
         }
     )

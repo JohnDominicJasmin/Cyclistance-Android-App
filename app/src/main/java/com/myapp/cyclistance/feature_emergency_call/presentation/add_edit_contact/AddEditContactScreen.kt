@@ -279,9 +279,11 @@ fun AddEditContactScreen(
 
 
     LaunchedEffect(key1 = galleryPermissionState.isGranted()){
-        if(galleryPermissionState.isGranted()){
-            openGalleryResultLauncher.launch("image/*")
+        if(!galleryPermissionState.isGranted()){
+           return@LaunchedEffect
         }
+
+        openGalleryResultLauncher.launch("image/*")
     }
 
     LaunchedEffect(key1 = openCameraPermissionState.isGranted()){

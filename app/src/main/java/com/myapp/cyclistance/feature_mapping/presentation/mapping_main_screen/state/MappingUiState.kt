@@ -49,7 +49,15 @@ data class MappingUiState(
     val accessPhotoDialogVisible: Boolean = false,
     val reportIncidentDialogVisible: Boolean = false,
     val incidentDescriptionDialogVisible: Boolean = false,
-    val incidentImageErrorMessage: String = ""
+    val incidentImageErrorMessage: String = "",
+
+
+
+    val prominentNotificationDialogVisible: Boolean = false,
+    val prominentGalleryDialogVisible: Boolean = false,
+    val prominentCameraDialogVisible: Boolean = false,
+    val prominentPhoneCallDialogVisible: Boolean = false,
+    val prominentLocationDialogVisible: Boolean = false
 
 
 
