@@ -25,6 +25,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
+import com.myapp.cyclistance.core.utils.permissions.isGranted
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.feature_mapping.domain.model.ConfirmationDetails
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.ConfirmDetailsContent
@@ -157,27 +158,99 @@ fun ConfirmDetailsScreen(
         }
     }
 
-    val onClickConfirmButton = remember {
-        {
+    val confirmDetails = remember{{
+        viewModel.onEvent(
+            event = ConfirmDetailsVmEvent.ConfirmDetails(
+                confirmDetailsModel = ConfirmationDetails(
+                    address = address.text,
+                    bikeType = bikeType.text,
+                    description = uiState.description,
+                    message = message.text
+                )
+            ))
+    }}
 
+    fun onClickConfirmButton() {
+
+
+        if (Build.VERSION.SDK_INT >= Q) {
+
+            if(!foregroundLocationPermissionsState.allPermissionsGranted){
+
+                uiState = uiState.copy(
+                    prominentLocationDialogVisible = true)
+                return
+            }
+
+            if(!backgroundLocationPermissionState.hasPermission){
+                uiState = uiState.copy(
+                    prominentLocationDialogVisible = true)
+                return
+            }
+
+            confirmDetails()
+
+            return
+        }
+
+        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
+            uiState = uiState.copy(
+                prominentLocationDialogVisible = true)
+            return
+
+        }
+
+        confirmDetails()
+
+    }
+
+
+    val onDismissNoInternetDialog = remember {
+        {
+            uiState = uiState.copy(
+                alertDialogState = AlertDialogState()
+            )
+        }
+    }
+
+    val dismissBackgroundLocationDialog = remember {
+        {
+            uiState = uiState.copy(backgroundLocationPermissionDialogVisible = false)
+        }
+    }
+
+    val dismissForegroundLocationDialog = remember {
+        {
+            uiState = uiState.copy(foregroundLocationPermissionDialogVisible = false)
+        }
+    }
+
+    val dismissProminentLocationDialog = remember {
+        {
+            uiState = uiState.copy(
+                prominentLocationDialogVisible = false
+            )
+        }
+    }
+
+
+
+    val requestBackgroundLocationPermission = remember{{
+        backgroundLocationPermissionState.requestPermission(onGranted = {
+            confirmDetails()
+        }, onDenied = {
+            uiState = uiState.copy(
+                backgroundLocationPermissionDialogVisible = true)
+        })
+
+    }}
+
+    val allowProminentLocationDialog = remember {
+        {
             if (Build.VERSION.SDK_INT >= Q) {
 
                 foregroundLocationPermissionsState.requestPermission(onGranted = {
-                    backgroundLocationPermissionState.requestPermission(onGranted = {
-                        viewModel.onEvent(
-                            event = ConfirmDetailsVmEvent.ConfirmDetails(
-                                confirmDetailsModel = ConfirmationDetails(
-                                    address = address.text,
-                                    bikeType = bikeType.text,
-                                    description = uiState.description,
-                                    message = message.text
-                                )
-                            ))
-                    }, onDenied = {
-                        uiState = uiState.copy(
-                            backgroundLocationPermissionDialogVisible = true)
-                    })
-
+                    requestBackgroundLocationPermission()
                 }, onDenied = {
                     uiState = uiState.copy(
                         foregroundLocationPermissionDialogVisible = true)
@@ -188,15 +261,7 @@ fun ConfirmDetailsScreen(
 
                 foregroundLocationPermissionsState.requestPermission(
                     onGranted = {
-                        viewModel.onEvent(
-                            event = ConfirmDetailsVmEvent.ConfirmDetails(
-                                confirmDetailsModel = ConfirmationDetails(
-                                    address = address.text,
-                                    bikeType = bikeType.text,
-                                    description = uiState.description,
-                                    message = message.text
-                                )
-                            ))
+                      confirmDetails()
                     },
                     onDenied = {
                         uiState = uiState.copy(
@@ -204,30 +269,28 @@ fun ConfirmDetailsScreen(
                     }
                 )
             }
-
-
-        }
-    }
-    val onDismissNoInternetDialog = remember {
-        {
-            uiState = uiState.copy(
-                alertDialogState = AlertDialogState()
-            )
         }
     }
 
-    val onDismissBackgroundLocationDialog = remember {
-        {
-            uiState = uiState.copy(backgroundLocationPermissionDialogVisible = false)
+    LaunchedEffect(key1 = foregroundLocationPermissionsState.isGranted()){
+        if(!foregroundLocationPermissionsState.isGranted()){
+            return@LaunchedEffect
         }
+
+        if(Build.VERSION.SDK_INT >= Q){
+            requestBackgroundLocationPermission()
+            return@LaunchedEffect
+
+        }
+        confirmDetails()
     }
 
-    val onDismissForegroundLocationDialog = remember {
-        {
-            uiState = uiState.copy(foregroundLocationPermissionDialogVisible = false)
+    LaunchedEffect(key1 = backgroundLocationPermissionState.isGranted(),){
+        if(!backgroundLocationPermissionState.isGranted()){
+            return@LaunchedEffect
         }
+        confirmDetails()
     }
-
 
 
     ConfirmDetailsContent(
@@ -247,8 +310,10 @@ fun ConfirmDetailsScreen(
                 is ConfirmDetailsUiEvent.ConfirmDetails -> onClickConfirmButton()
                 is ConfirmDetailsUiEvent.CancelConfirmation -> onClickCancelButton()
                 is ConfirmDetailsUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is ConfirmDetailsUiEvent.DismissBackgroundLocationDialog -> onDismissBackgroundLocationDialog()
-                is ConfirmDetailsUiEvent.DismissForegroundLocationDialog -> onDismissForegroundLocationDialog()
+                is ConfirmDetailsUiEvent.DismissBackgroundLocationDialog -> dismissBackgroundLocationDialog()
+                is ConfirmDetailsUiEvent.DismissForegroundLocationDialog -> dismissForegroundLocationDialog()
+                ConfirmDetailsUiEvent.AllowProminentLocationDialog -> allowProminentLocationDialog()
+                ConfirmDetailsUiEvent.DismissProminentLocationDialog -> dismissProminentLocationDialog()
             }
         }
     )

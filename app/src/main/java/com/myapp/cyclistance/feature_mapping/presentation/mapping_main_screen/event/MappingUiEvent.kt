@@ -53,6 +53,19 @@ sealed class MappingUiEvent {
     data object RescueRequestAccepted : MappingUiEvent()
     data object CancelOnGoingRescue : MappingUiEvent()
     data object ResetIncidentReport : MappingUiEvent()
+
+    data object DismissProminentNotificationDialog : MappingUiEvent()
+    data object DismissProminentGalleryDialog : MappingUiEvent()
+    data object DismissProminentCameraDialog : MappingUiEvent()
+    data object DismissProminentPhoneCallDialog : MappingUiEvent()
+    data object DismissProminentLocationDialog : MappingUiEvent()
+
+    data object AllowProminentNotificationDialog : MappingUiEvent()
+    data object AllowProminentGalleryDialog : MappingUiEvent()
+    data object AllowProminentCameraDialog : MappingUiEvent()
+    data object AllowProminentPhoneCallDialog : MappingUiEvent()
+    data object AllowProminentLocationDialog : MappingUiEvent()
+
     data class  MapTypeBottomSheet(val visibility: Boolean) : MappingUiEvent()
 
     // Events with Parameters

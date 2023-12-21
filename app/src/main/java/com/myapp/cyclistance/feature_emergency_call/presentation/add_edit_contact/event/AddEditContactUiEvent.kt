@@ -12,4 +12,8 @@ sealed class AddEditContactUiEvent{
     data object OpenCamera : AddEditContactUiEvent()
     data object DismissCameraDialog : AddEditContactUiEvent()
     data object DismissFilesAndMediaDialog : AddEditContactUiEvent()
+    data object DismissProminentCameraDialog : AddEditContactUiEvent()
+    data object DismissProminentGalleryDialog : AddEditContactUiEvent()
+    data object AllowProminentCameraDialog : AddEditContactUiEvent()
+    data object AllowProminentGalleryDialog : AddEditContactUiEvent()
 }

@@ -10,11 +10,14 @@ sealed class EmergencyCallUiEvent {
 
     data class OnClickDeleteContact(val emergencyContact: EmergencyContactModel) :
         EmergencyCallUiEvent()
+    data object DismissProminentPhoneCallDialog : EmergencyCallUiEvent()
+    data object AllowProminentPhoneCallDialog : EmergencyCallUiEvent()
 
     data class DeleteContact(val emergencyContact: EmergencyContactModel) : EmergencyCallUiEvent()
     data object DismissDeleteContactDialog : EmergencyCallUiEvent()
     data object DismissMaximumContactDialog : EmergencyCallUiEvent()
     data object DismissCallPhonePermissionDialog : EmergencyCallUiEvent()
+
 
 
 

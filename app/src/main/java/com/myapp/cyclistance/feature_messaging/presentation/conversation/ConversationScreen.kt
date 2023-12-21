@@ -91,7 +91,7 @@ fun ConversationScreen(
     }
 
 
-    val sendMessage = remember {
+    val sendMessage = remember(messageInput) {
         { message: String ->
 
             val receiverId = state.userReceiverMessage!!.userDetails.uid
@@ -131,19 +131,19 @@ fun ConversationScreen(
 
 
 
-    val onSendMessage = remember(messageInput){{
+    fun onSendMessage(){
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            notificationPermissionState.requestPermission(onGranted = {
-                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }, onDenied = {
-                notificationPermissionDialogVisibility(true)
-                sendMessage(messageInput.text)
-            })
-        } else {
-            sendMessage(messageInput.text)
+        sendMessage(messageInput.text)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+
         }
-    }}
+        uiState = uiState.copy(prominentNotificationDialogVisible = !notificationPermissionState.isGranted())
+
+
+
+
+    }
 
     val resendMessageDialogVisibility = remember{{ visibility: Boolean ->
         uiState = uiState.copy(resendDialogVisible = visibility)
@@ -156,9 +156,21 @@ fun ConversationScreen(
         viewModel.onEvent(event = ConversationVmEvent.MarkAsSeen(messageId))
     }}
 
+    val dismissProminentNotificationDialog = remember{{
+        uiState = uiState.copy(prominentNotificationDialogVisible = false)
+    }}
+
+    val allowProminentNotificationDialog = remember{{
+        notificationPermissionState.requestPermission(onGranted = {
+            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }, onDenied = {
+            notificationPermissionDialogVisibility(true)
+        })
+    }}
+
 
     LaunchedEffect(key1 = notificationPermissionState.isGranted()){
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU){
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
             return@LaunchedEffect
         }
 
@@ -221,7 +233,8 @@ fun ConversationScreen(
                 is ConversationUiEvent.ResendDialogVisibility -> resendMessageDialogVisibility(event.visible)
                 is ConversationUiEvent.ResendMessage -> resendMessage()
                 is ConversationUiEvent.MarkAsSeen -> markAsSeen(event.messageId)
-
+                ConversationUiEvent.AllowProminentNotificationDialog -> allowProminentNotificationDialog()
+                ConversationUiEvent.DismissProminentNotificationDialog -> dismissProminentNotificationDialog()
             }
         }
     )

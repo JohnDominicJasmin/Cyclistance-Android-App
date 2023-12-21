@@ -14,6 +14,7 @@ data class EmergencyCallUIState(
     val selectedPhoneNumber: String = "",
     val maximumContactDialogVisible: Boolean = false,
     val callPhonePermissionDialogVisible: Boolean = false,
+    val prominentCallPhoneDialogVisible: Boolean = false
 
 
 ) : Parcelable

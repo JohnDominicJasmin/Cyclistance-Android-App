@@ -34,6 +34,8 @@ import androidx.constraintlayout.compose.Dimension
 import com.myapp.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessCameraDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessGalleryDialog
 import com.myapp.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.myapp.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileUiEvent
 import com.myapp.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileState
@@ -98,7 +100,7 @@ fun EditProfileScreenContent(
 ) {
 
 
-    val nameChanges by remember(name){
+    val nameChanges by remember(name) {
         derivedStateOf {
             name.text != state.nameSnapshot
         }
@@ -108,17 +110,18 @@ fun EditProfileScreenContent(
         derivedStateOf { uiState.selectedImageUri.isNotEmpty() }
     }
 
-    val cyclingGroupChanges by remember(cyclingGroup){
+    val cyclingGroupChanges by remember(cyclingGroup) {
         derivedStateOf {
             cyclingGroup.text != state.cyclingGroupSnapshot
         }
     }
 
-    val addressChanges by remember(address){
+    val addressChanges by remember(address) {
         derivedStateOf { address.text != state.addressSnapshot }
     }
 
-    val isUserInformationChanges = nameChanges || imageChanges || cyclingGroupChanges || addressChanges
+    val isUserInformationChanges =
+        nameChanges || imageChanges || cyclingGroupChanges || addressChanges
 
 
 
@@ -136,14 +139,15 @@ fun EditProfileScreenContent(
             bottomSheetScaffoldState = bottomSheetScaffoldState,
             isLoading = state.isLoading) {
 
-            ConstraintLayout(modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .navigationBarsPadding()
-                .imePadding()
-                .verticalScroll(rememberScrollState())) {
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .navigationBarsPadding()
+                    .imePadding()
+                    .verticalScroll(rememberScrollState())) {
 
-                val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar, noInternetDialog, permissionDialog) = createRefs()
+                val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar, noInternetDialog, permissionDialog, prominentDialog) = createRefs()
 
                 ProfilePictureArea(
                     photoUrl = photoUrl,
@@ -257,6 +261,44 @@ fun EditProfileScreenContent(
                     }, onDismiss = {
                         event(EditProfileUiEvent.DismissFilesAndMediaDialog)
                     })
+                }
+
+                if (uiState.prominentGalleryDialogVisible) {
+
+                    AccessGalleryDialog(
+                        modifier = Modifier.constrainAs(prominentDialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            height = Dimension.wrapContent
+                            centerTo(parent)
+                        }, onDismissRequest = {
+                            event(EditProfileUiEvent.DismissProminentGalleryDialog)
+                        }, onDeny = {
+                            event(EditProfileUiEvent.DismissProminentGalleryDialog)
+                        }, onAllow = {
+                            event(EditProfileUiEvent.DismissProminentGalleryDialog)
+                            event(EditProfileUiEvent.AllowProminentGalleryDialog)
+                        })
+                }
+
+                if (uiState.prominentCameraDialogVisible) {
+
+                    AccessCameraDialog(
+                        modifier = Modifier.constrainAs(prominentDialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            height = Dimension.wrapContent
+                            centerTo(parent)
+                        }, onDismissRequest = {
+                            event(EditProfileUiEvent.DismissCameraDialog)
+                        }, onDeny = {
+                            event(EditProfileUiEvent.DismissCameraDialog)
+                        }, onAllow = {
+                            event(EditProfileUiEvent.DismissCameraDialog)
+                            event(EditProfileUiEvent.AllowProminentCameraDialog)
+                        })
                 }
 
                 if (state.isLoading) {

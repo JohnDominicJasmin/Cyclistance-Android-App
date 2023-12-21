@@ -110,15 +110,14 @@ fun EmergencyCallScreen(
     val onClickContact = remember {
         { phoneNumber: String ->
 
-            openPhoneCallPermissionState.requestPermission(onGranted = {
+            if (openPhoneCallPermissionState.hasPermission) {
                 callPhoneNumber(phoneNumber)
-            }, onDenied = {
-
+            } else {
                 uiState = uiState.copy(
-                    selectedPhoneNumber = phoneNumber,
-                    callPhonePermissionDialogVisible = true)
+                    prominentCallPhoneDialogVisible = true,
+                    selectedPhoneNumber = phoneNumber)
+            }
 
-            })
 
         }
     }
@@ -135,13 +134,32 @@ fun EmergencyCallScreen(
         }
     }
 
-    LaunchedEffect(key1 = openPhoneCallPermissionState.isGranted()){
-        if(openPhoneCallPermissionState.isGranted()){
+    val dismissProminentPhoneCallDialog = remember {
+        {
+            uiState = uiState.copy(prominentCallPhoneDialogVisible = false)
+        }
+    }
+
+    val allowProminentPhoneCallDialog = remember {
+        {
+            openPhoneCallPermissionState.requestPermission(onGranted = {
+                callPhoneNumber(uiState.selectedPhoneNumber)
+            }, onDenied = {
+
+                uiState = uiState.copy(
+                    callPhonePermissionDialogVisible = true)
+
+            })
+        }
+    }
+
+    LaunchedEffect(key1 = openPhoneCallPermissionState.isGranted()) {
+        if (openPhoneCallPermissionState.isGranted()) {
             uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }
                 ?.let { callPhoneNumber(it) }
         }
     }
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)
     }
 
@@ -173,6 +191,8 @@ fun EmergencyCallScreen(
                 is EmergencyCallUiEvent.DeleteContact -> deleteContact(event.emergencyContact)
                 is EmergencyCallUiEvent.DismissMaximumContactDialog -> dismissMaximumDialog()
                 EmergencyCallUiEvent.DismissCallPhonePermissionDialog -> dismissCallPhonePermissionDialog()
+                EmergencyCallUiEvent.DismissProminentPhoneCallDialog -> dismissProminentPhoneCallDialog()
+                EmergencyCallUiEvent.AllowProminentPhoneCallDialog -> allowProminentPhoneCallDialog()
             }
         })
 }

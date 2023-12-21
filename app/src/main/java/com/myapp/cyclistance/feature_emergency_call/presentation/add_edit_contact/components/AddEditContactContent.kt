@@ -25,6 +25,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessCameraDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessGalleryDialog
 import com.myapp.cyclistance.feature_emergency_call.presentation.add_edit_contact.event.AddEditContactUiEvent
 import com.myapp.cyclistance.feature_emergency_call.presentation.add_edit_contact.state.AddEditContactState
 import com.myapp.cyclistance.feature_emergency_call.presentation.add_edit_contact.state.AddEditContactUiState
@@ -145,13 +147,37 @@ fun AddEditContactContent(
                 }
 
 
+                if(uiState.prominentGalleryDialogVisible){
+
+                    AccessGalleryDialog(onDismissRequest = {
+                        event(AddEditContactUiEvent.DismissProminentGalleryDialog)
+                    }, onDeny = {
+                        event(AddEditContactUiEvent.DismissProminentGalleryDialog)
+                    }, onAllow = {
+                        event(AddEditContactUiEvent.DismissProminentGalleryDialog)
+                        event(AddEditContactUiEvent.AllowProminentGalleryDialog)
+                    })
+                }
+
+                if(uiState.prominentCameraDialogVisible){
+
+                    AccessCameraDialog(onDismissRequest = {
+                        event(AddEditContactUiEvent.DismissCameraDialog)
+                    }, onDeny = {
+                        event(AddEditContactUiEvent.DismissCameraDialog)
+                    }, onAllow = {
+                        event(AddEditContactUiEvent.DismissCameraDialog)
+                        event(AddEditContactUiEvent.AllowProminentCameraDialog)
+                    })
+                }
+
                 if (uiState.cameraPermissionDialogVisible) {
                     DialogCameraPermission(onDismiss = {
                         event(AddEditContactUiEvent.DismissCameraDialog)
                     })
                 }
 
-                if (uiState.filesAndMediaDialogVisible) {
+                if (uiState.filesAndMediaPermissionDialogVisible) {
                     DialogFilesAndMediaPermission(onDismiss = {
                         event(AddEditContactUiEvent.DismissFilesAndMediaDialog)
                     })

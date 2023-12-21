@@ -7,10 +7,12 @@ sealed class ConfirmDetailsUiEvent {
     data class OnChangeBikeType(val bikeType: TextFieldValue) : ConfirmDetailsUiEvent()
     data class OnChangeDescription(val description: String) : ConfirmDetailsUiEvent()
     data class OnChangeMessage(val message: TextFieldValue) : ConfirmDetailsUiEvent()
-    object ConfirmDetails : ConfirmDetailsUiEvent()
-    object CancelConfirmation : ConfirmDetailsUiEvent()
-    object DismissNoInternetDialog : ConfirmDetailsUiEvent()
-    object DismissBackgroundLocationDialog : ConfirmDetailsUiEvent()
-    object DismissForegroundLocationDialog : ConfirmDetailsUiEvent()
+    data object ConfirmDetails : ConfirmDetailsUiEvent()
+    data object CancelConfirmation : ConfirmDetailsUiEvent()
+    data object DismissNoInternetDialog : ConfirmDetailsUiEvent()
+    data object DismissBackgroundLocationDialog : ConfirmDetailsUiEvent()
+    data object DismissForegroundLocationDialog : ConfirmDetailsUiEvent()
+    data object DismissProminentLocationDialog : ConfirmDetailsUiEvent()
+    data object AllowProminentLocationDialog : ConfirmDetailsUiEvent()
 
 }

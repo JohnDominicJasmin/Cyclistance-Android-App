@@ -69,7 +69,7 @@ fun AddEditContactScreen(
         mutableStateOf(TextFieldValue())
     }
     var uiState by rememberSaveable {
-        mutableStateOf(AddEditContactUiState())
+        mutableStateOf(value = AddEditContactUiState())
     }
 
     val scope = rememberCoroutineScope()
@@ -129,11 +129,20 @@ fun AddEditContactScreen(
 
         }
 
-    val filesAndMediaPermissionState =
+    val galleryPermissionState =
         rememberMultiplePermissionsState(
-            permissions = listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            permissions = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                listOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                )
+            }else{
+                listOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
+        )
 
 
     val openCameraPermissionState =
@@ -141,35 +150,37 @@ fun AddEditContactScreen(
 
     val openGallery = remember {
         {
-            filesAndMediaPermissionState.requestPermission(
-                onGranted = {
-                    openGalleryResultLauncher.launch("image/*")
-                }, onDenied = {
-                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
-                })
-
+            if(galleryPermissionState.allPermissionsGranted){
+                openGalleryResultLauncher.launch("image/*")
+            }else{
+                uiState = uiState.copy(prominentGalleryDialogVisible = true)
+            }
         }
     }
+
+
 
     val openCamera = remember {
         {
-            openCameraPermissionState.requestPermission(
-                onGranted = {
-                    openCameraResultLauncher.launch()
-                }, onDenied = {
-                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
-                })
+
+            if(openCameraPermissionState.hasPermission){
+                openCameraResultLauncher.launch()
+            }else{
+                uiState = uiState.copy(prominentCameraDialogVisible = true)
+            }
+
         }
     }
 
 
-    val onDismissFilesAndMediaPermissionDialog = remember {
+
+    val dismissGalleryPermissionDialog = remember {
         {
-            uiState = uiState.copy(filesAndMediaDialogVisible = false)
+            uiState = uiState.copy(filesAndMediaPermissionDialogVisible = false)
         }
     }
 
-    val onDismissCameraPermissionDialog = remember {
+    val dismissCameraPermissionDialog = remember {
         {
             uiState = uiState.copy(cameraPermissionDialogVisible = false)
         }
@@ -241,11 +252,38 @@ fun AddEditContactScreen(
 
         }
     }
+    val dismissProminentCameraDialog = remember{{
+        uiState = uiState.copy(prominentCameraDialogVisible = false)
+    }}
 
-    LaunchedEffect(key1 = filesAndMediaPermissionState.isGranted()){
-        if(filesAndMediaPermissionState.isGranted()){
+    val dismissProminentGalleryDialog = remember{{
+        uiState = uiState.copy(prominentGalleryDialogVisible = false)
+    }}
+
+    val allowProminentCameraDialog = remember{{
+        openCameraPermissionState.requestPermission(onGranted = {
+            openCameraResultLauncher.launch()
+        }, onDenied = {
+            uiState = uiState.copy(cameraPermissionDialogVisible = true)
+        })
+    }}
+
+    val allowProminentGalleryDialog = remember{{
+        galleryPermissionState.requestPermission(onGranted = {
             openGalleryResultLauncher.launch("image/*")
+        }, onDenied = {
+            uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true)
+        })
+    }}
+
+
+
+    LaunchedEffect(key1 = galleryPermissionState.isGranted()){
+        if(!galleryPermissionState.isGranted()){
+           return@LaunchedEffect
         }
+
+        openGalleryResultLauncher.launch("image/*")
     }
 
     LaunchedEffect(key1 = openCameraPermissionState.isGranted()){
@@ -289,8 +327,8 @@ fun AddEditContactScreen(
         event = { event ->
             when(event){
                 AddEditContactUiEvent.CancelEditContact -> onCloseEditContactScreen()
-                AddEditContactUiEvent.DismissCameraDialog -> onDismissCameraPermissionDialog()
-                AddEditContactUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
+                AddEditContactUiEvent.DismissCameraDialog -> dismissCameraPermissionDialog()
+                AddEditContactUiEvent.DismissFilesAndMediaDialog -> dismissGalleryPermissionDialog()
                 is AddEditContactUiEvent.OnChangeName -> onValueChangeName(event.name)
                 is AddEditContactUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
                 AddEditContactUiEvent.OpenCamera -> openCamera()
@@ -300,6 +338,11 @@ fun AddEditContactScreen(
                     toggleBottomSheet()
                     keyboardController?.hide()
                 }
+
+                AddEditContactUiEvent.AllowProminentCameraDialog -> allowProminentCameraDialog()
+                AddEditContactUiEvent.AllowProminentGalleryDialog -> allowProminentGalleryDialog()
+                AddEditContactUiEvent.DismissProminentCameraDialog -> dismissProminentCameraDialog()
+                AddEditContactUiEvent.DismissProminentGalleryDialog -> dismissProminentGalleryDialog()
             }
         },)
 
