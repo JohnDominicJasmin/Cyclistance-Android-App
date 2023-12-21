@@ -134,7 +134,7 @@ fun ConversationScreen(
     fun onSendMessage(){
 
         sendMessage(messageInput.text)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return
 
         }
@@ -170,7 +170,7 @@ fun ConversationScreen(
 
 
     LaunchedEffect(key1 = notificationPermissionState.isGranted()){
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU){
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
             return@LaunchedEffect
         }
 
