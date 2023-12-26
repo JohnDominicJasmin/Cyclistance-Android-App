@@ -326,8 +326,22 @@ fun MappingScreen(
             return
         }
 
-        uiState = uiState.copy(
-            prominentNotificationDialogVisible = !notificationPermissionState.isGranted())
+        if(!notificationPermissionState.hasPermission){
+            uiState = uiState.copy(prominentNotificationDialogVisible = true)
+            return
+        }
+
+        onRequestHelp()
+
+    }
+
+    val requestBackgroundLocationPermission = remember{{
+        backgroundLocationPermissionState.requestPermission(onGranted = {
+            startHelp()
+        }, onDenied = {
+            uiState = uiState.copy(
+                backgroundLocationPermissionDialogVisible = true)
+        })
 
     }
 
@@ -684,13 +698,18 @@ fun MappingScreen(
     fun startRespondingToHelp(){
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            respondToHelp()
+            onRespondToHelp()
             return
 
         }
 
-        uiState = uiState.copy(
-            prominentNotificationDialogVisible = !notificationPermissionState.isGranted())
+        if(!notificationPermissionState.hasPermission){
+            uiState = uiState.copy(
+                prominentNotificationDialogVisible = true)
+            return
+        }
+
+        onRespondToHelp()
 
     }
 
