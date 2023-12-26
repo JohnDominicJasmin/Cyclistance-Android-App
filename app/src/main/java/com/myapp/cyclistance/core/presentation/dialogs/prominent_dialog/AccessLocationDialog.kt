@@ -24,7 +24,7 @@ fun AccessLocationDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         title = "Access your Location",
-        description = "Cyclistance gathers your location information for accessing and sharing purposes, enabling you to share your current location with others. This improves the app's features for navigation and social connectivity.",
+        description = "Cyclistance App collects location information for accessing and sharing purposes, enabling you to share your current location with others even when the app is in the background or not actively in use.",
         icon = icon,
         warningText = "Tap 'Allow' to authorize access, as refusal may affect the app's capability to accurately display your location on the map.",
         onDeny = onDeny,
