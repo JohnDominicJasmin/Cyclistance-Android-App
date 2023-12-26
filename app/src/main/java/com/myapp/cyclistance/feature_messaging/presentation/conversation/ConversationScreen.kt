@@ -138,7 +138,11 @@ fun ConversationScreen(
             return
 
         }
-        uiState = uiState.copy(prominentNotificationDialogVisible = !notificationPermissionState.isGranted())
+
+        if(!notificationPermissionState.hasPermission){
+            uiState = uiState.copy(prominentNotificationDialogVisible = true)
+        }
+
 
 
 
