@@ -173,14 +173,13 @@ fun ConfirmDetailsScreen(
     fun onClickConfirmButton() {
 
 
+        if(!foregroundLocationPermissionsState.allPermissionsGranted){
+            uiState = uiState.copy(
+                prominentLocationDialogVisible = true)
+            return
+        }
+
         if (Build.VERSION.SDK_INT >= Q) {
-
-            if(!foregroundLocationPermissionsState.allPermissionsGranted){
-
-                uiState = uiState.copy(
-                    prominentLocationDialogVisible = true)
-                return
-            }
 
             if(!backgroundLocationPermissionState.hasPermission){
                 uiState = uiState.copy(
@@ -193,12 +192,6 @@ fun ConfirmDetailsScreen(
             return
         }
 
-        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
-            uiState = uiState.copy(
-                prominentLocationDialogVisible = true)
-            return
-
-        }
 
         confirmDetails()
 
