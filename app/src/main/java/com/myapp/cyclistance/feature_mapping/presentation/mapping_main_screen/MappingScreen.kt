@@ -205,10 +205,15 @@ fun MappingScreen(
     val openPhoneCallPermissionState =
         rememberPermissionState(permission = Manifest.permission.CALL_PHONE)
 
+
+    val backgroundLocationPermissionState =
+        rememberPermissionState(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+
     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION))
+
 
 
     val userLocationAvailable by remember(
@@ -279,15 +284,29 @@ fun MappingScreen(
     }
 
 
-    val onRequestHelp = remember {
-        {
-            if(foregroundLocationPermissionsState.allPermissionsGranted){
-                context.startLocationServiceIntentAction()
-                requestHelp()
-            }else{
-                uiState = uiState.copy(prominentLocationDialogVisible = true)
-            }
+    fun onRequestHelp() {
+
+        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
+            uiState = uiState.copy(prominentLocationDialogVisible = true)
+            return
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            if (!backgroundLocationPermissionState.hasPermission) {
+                uiState = uiState.copy(prominentLocationDialogVisible = true)
+                return
+            }
+
+            context.startLocationServiceIntentAction()
+            requestHelp()
+
+            return
+
+        }
+
+        context.startLocationServiceIntentAction()
+        requestHelp()
     }
 
 
@@ -308,15 +327,41 @@ fun MappingScreen(
             Unit
         }
     }
+
+    fun onRespondToHelp(){
+        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
+            uiState = uiState.copy(prominentLocationDialogVisible = true)
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            if (!backgroundLocationPermissionState.hasPermission) {
+                uiState = uiState.copy(prominentLocationDialogVisible = true)
+                return
+            }
+
+            context.startLocationServiceIntentAction()
+            respondToHelp()
+            return
+
+        }
+
+        context.startLocationServiceIntentAction()
+        respondToHelp()
+    }
+
+    fun startHelp(){
+        if (uiState.mapSelectedRescuee == null) {
+            onRequestHelp()
+        } else {
+            onRespondToHelp()
+        }
+    }
+
     val notificationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = {
-            if (uiState.mapSelectedRescuee == null) {
-                onRequestHelp()
-            } else {
-                respondToHelp()
-            }
-        }
+        onResult = { startHelp() }
     )
 
     fun startRequestingHelp(){
@@ -343,7 +388,8 @@ fun MappingScreen(
                 backgroundLocationPermissionDialogVisible = true)
         })
 
-    }
+    }}
+
 
 
     val showRouteDirection = remember(mapboxMap) {
@@ -729,11 +775,15 @@ fun MappingScreen(
         }
     }
 
-    val locationPermissionDialogVisibility = remember {
+    val foregroundLocationPermissionDialogVisibility = remember {
         { visibility: Boolean ->
-            uiState = uiState.copy(locationPermissionDialogVisible = visibility)
+            uiState = uiState.copy(foregroundLocationPermissionDialogVisible = visibility)
         }
     }
+
+    val backgroundLocationPermissionDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(backgroundLocationPermissionDialogVisible = visibility)
+    }}
 
     val banAccountDialogVisibility = remember{{ visibility: Boolean ->
         uiState = uiState.copy(banAccountDialogVisible = visibility)
@@ -1270,11 +1320,28 @@ fun MappingScreen(
     }}
 
     val allowProminentLocationDialog = remember{{
-        foregroundLocationPermissionsState.requestPermission(onGranted = {
-            onLocateUser()
-        }, onDenied = {
-            uiState = uiState.copy(locationPermissionDialogVisible = true)
-        })
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            foregroundLocationPermissionsState.requestPermission(onGranted = {
+                requestBackgroundLocationPermission()
+            }, onDenied = {
+                uiState = uiState.copy(
+                    foregroundLocationPermissionDialogVisible = true)
+            })
+
+
+        } else {
+
+            foregroundLocationPermissionsState.requestPermission(
+                onGranted = {
+                   startHelp()
+                },
+                onDenied = {
+                    uiState = uiState.copy(
+                        foregroundLocationPermissionDialogVisible = true)
+                }
+            )
+        }
     }}
 
     val dismissProminentLocationDialog = remember{{
@@ -1787,9 +1854,22 @@ fun MappingScreen(
         }
     }
 
+    LaunchedEffect(key1 = backgroundLocationPermissionState.isGranted()){
+        if(!backgroundLocationPermissionState.isGranted()){
+            return@LaunchedEffect
+        }
+        startHelp()
+
+    }
+
 
     LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {
+            return@LaunchedEffect
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            requestBackgroundLocationPermission()
             return@LaunchedEffect
         }
 
@@ -1805,7 +1885,7 @@ fun MappingScreen(
     MappingScreenContent(
         modifier = Modifier.padding(paddingValues),
         state = state,
-        locationPermissionState = foregroundLocationPermissionsState,
+        locationPermissionGranted = foregroundLocationPermissionsState.allPermissionsGranted,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         hazardousLaneMarkers = hazardousMarkers,
         mapboxMap = mapboxMap,
@@ -1834,7 +1914,9 @@ fun MappingScreen(
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.ConfirmedDestinationArrived -> confirmedDestinationArrived()
-                is MappingUiEvent.LocationPermissionDialog -> locationPermissionDialogVisibility(event.visibility)
+                is MappingUiEvent.ForegroundLocationPermissionDialog -> foregroundLocationPermissionDialogVisibility(event.visibility)
+                is MappingUiEvent.BackgroundLocationPermissionDialog -> backgroundLocationPermissionDialogVisibility(event.visibility)
+
                 is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
                 is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)
                 is MappingUiEvent.OpenFamilyTracker -> shareLocation()

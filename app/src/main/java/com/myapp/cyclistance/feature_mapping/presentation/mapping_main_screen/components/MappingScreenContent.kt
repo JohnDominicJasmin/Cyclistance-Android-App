@@ -28,13 +28,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
 import com.myapp.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.myapp.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
+import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogBackgroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
@@ -76,7 +74,7 @@ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.st
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MappingScreenContent(
     modifier: Modifier,
@@ -87,7 +85,7 @@ fun MappingScreenContent(
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
     hazardousLaneMarkers: List<HazardousLaneMarkerDetails>,
-    locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
+    locationPermissionGranted: Boolean,
     event: (MappingUiEvent) -> Unit = {},
 ) {
 
@@ -95,19 +93,19 @@ fun MappingScreenContent(
         derivedStateOf { (state.newRescueRequest?.request)?.size ?: 0 }
     }
 
-    var lastNotifiedRequestId by rememberSaveable{ mutableStateOf("") }
+    var lastNotifiedRequestId by rememberSaveable { mutableStateOf("") }
     var lastNotifiedAcceptedId by rememberSaveable { mutableStateOf("") }
 
     val configuration = LocalConfiguration.current
-    val markerPostedCount by remember(hazardousLaneMarkers.size){
+    val markerPostedCount by remember(hazardousLaneMarkers.size) {
         derivedStateOf {
             hazardousLaneMarkers.count { it.idCreator == state.userId }
         }
     }
 
-    LaunchedEffect(key1 = respondentCount){
+    LaunchedEffect(key1 = respondentCount) {
         val request = state.newRescueRequest?.request?.lastOrNull() ?: return@LaunchedEffect
-        if(lastNotifiedRequestId == request.id) {
+        if (lastNotifiedRequestId == request.id) {
             return@LaunchedEffect
         }
 
@@ -115,16 +113,17 @@ fun MappingScreenContent(
         lastNotifiedRequestId = request.id ?: ""
     }
 
-    LaunchedEffect(key1 = uiState.rescueRequestAccepted, key2 = uiState.isRescueCancelled.not()){
+    LaunchedEffect(key1 = uiState.rescueRequestAccepted, key2 = uiState.isRescueCancelled.not()) {
 
 
         val rescueeId = state.rescuee?.id
-        if(lastNotifiedAcceptedId == rescueeId){
+        if (lastNotifiedAcceptedId == rescueeId) {
             return@LaunchedEffect
         }
         if (uiState.rescueRequestAccepted && uiState.isRescueCancelled.not()) {
 
-            event(MappingUiEvent.NotifyRequestAccepted(
+            event(
+                MappingUiEvent.NotifyRequestAccepted(
                     message = "${state.rescuee?.name} accepted your request"))
             lastNotifiedAcceptedId = rescueeId ?: ""
         }
@@ -149,7 +148,7 @@ fun MappingScreenContent(
                 )
             }
 
-            if(uiState.callPhonePermissionDialogVisible){
+            if (uiState.callPhonePermissionDialogVisible) {
                 DialogPhonePermission(
                     modifier = Modifier,
                     onDismiss = {
@@ -218,7 +217,7 @@ fun MappingScreenContent(
                                 height = Dimension.fillToConstraints
 
                             },
-                        locationPermissionGranted = locationPermissionState.allPermissionsGranted,
+                        locationPermissionGranted = locationPermissionGranted,
                         onClickLocateUserButton = { event(MappingUiEvent.LocateUser) },
                         onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
                         onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
@@ -251,9 +250,11 @@ fun MappingScreenContent(
                     val buttonVisible =
                         uiState.isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
                     val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
-                    val respondToHelpVisible = uiState.requestHelpButtonVisible.not() && buttonVisible
+                    val respondToHelpVisible =
+                        uiState.requestHelpButtonVisible.not() && buttonVisible
 
-                    val requestPending = state.user.isRescueRequestPending(uiState.mapSelectedRescuee?.userId) == true
+                    val requestPending =
+                        state.user.isRescueRequestPending(uiState.mapSelectedRescuee?.userId) == true
 
                     RequestHelpButton(
                         modifier = Modifier.constrainAs(requestHelpButton) {
@@ -302,7 +303,7 @@ fun MappingScreenContent(
                             })
                     }
 
-                    if(uiState.reportIncidentDialogVisible){
+                    if (uiState.reportIncidentDialogVisible) {
                         ReportIncidentDialog(
                             incidentDescription = incidentDescription,
                             onNewLabel = {
@@ -313,8 +314,8 @@ fun MappingScreenContent(
                             onChangeDescription = {
                                 event(MappingUiEvent.OnChangeIncidentDescription(it))
                             },
-                            addIncidentImage = {  event(MappingUiEvent.AccessPhotoDialog(visibility = true)) },
-                            viewImage = {  event(MappingUiEvent.ViewImage) },
+                            addIncidentImage = { event(MappingUiEvent.AccessPhotoDialog(visibility = true)) },
+                            viewImage = { event(MappingUiEvent.ViewImage) },
                             onClickConfirm = {
                                 event(MappingUiEvent.OnReportIncident(uiState.selectedIncidentLabel))
                             }, onDismissRequest = {
@@ -325,15 +326,19 @@ fun MappingScreenContent(
                     }
 
 
-                    if(uiState.incidentDescriptionDialogVisible){
+                    if (uiState.incidentDescriptionDialogVisible) {
                         IncidentDescriptionDialog(
                             uiState = uiState,
                             state = state,
-                            icon  = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
-                            onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },
+                            icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
+                            onClickEdit = {
+                                event(
+                                    MappingUiEvent.OnClickEditIncidentDescription(
+                                        uiState.selectedHazardousMarker))
+                            },
                             onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
                             viewProofIncident = { event(MappingUiEvent.ViewImageIncidentDetails) },
-                            onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription)  },
+                            onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) },
                             onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
                             onDismissRequest = {
                                 event(MappingUiEvent.IncidentDescriptionDialog(visibility = false))
@@ -343,7 +348,8 @@ fun MappingScreenContent(
                                 event(
                                     MappingUiEvent.UpdateIncidentDescription(
                                         label = label,
-                                        description = description))})
+                                        description = description))
+                            })
                     }
 
                     if (uiState.cancelSearchDialogVisible) {
@@ -408,8 +414,9 @@ fun MappingScreenContent(
                     if (uiState.deleteHazardousMarkerDialogVisible) {
                         DeleteHazardousLaneMarkerDialog(
                             onDismissRequest = {
-                                event(MappingUiEvent.HazardousLaneMarkerDialog(
-                                    visibility = false))
+                                event(
+                                    MappingUiEvent.HazardousLaneMarkerDialog(
+                                        visibility = false))
                             },
                             modifier = Modifier.constrainAs(dialog) {
                                 end.linkTo(parent.end)
@@ -438,23 +445,24 @@ fun MappingScreenContent(
                             })
                     }
 
-                    if(uiState.banAccountDialogVisible && state.bannedAccountDetails != null){
+                    if (uiState.banAccountDialogVisible && state.bannedAccountDetails != null) {
 
-                        val period = state.bannedAccountDetails.endDate?.toReadableDateTime(pattern = "yyyy-MM-dd")!!
+                        val period =
+                            state.bannedAccountDetails.endDate?.toReadableDateTime(pattern = "yyyy-MM-dd")!!
                         val reason = state.bannedAccountDetails.reason
-                        BannedAccountDialog(modifier = Modifier.constrainAs(dialog){
+                        BannedAccountDialog(modifier = Modifier.constrainAs(dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
                             height = Dimension.wrapContent
                             centerTo(parent)
-                        },period = period, reason = reason, onDismissRequest = {
+                        }, period = period, reason = reason, onDismissRequest = {
                             event(MappingUiEvent.BannedAccountDialog(visibility = false))
                         })
 
                     }
 
-                    if (uiState.locationPermissionDialogVisible) {
+                    if (uiState.foregroundLocationPermissionDialogVisible) {
                         DialogForegroundLocationPermission(
                             modifier = Modifier.constrainAs(
                                 dialog) {
@@ -464,13 +472,37 @@ fun MappingScreenContent(
                                 height = Dimension.wrapContent
                                 centerTo(parent)
                             },
-                            onDismiss = { event(MappingUiEvent.LocationPermissionDialog(visibility = false)) }
+                            onDismiss = {
+                                event(MappingUiEvent.ForegroundLocationPermissionDialog(visibility = false))
+                            }
                         )
+                    }
+
+                    if (uiState.backgroundLocationPermissionDialogVisible) {
+                        DialogBackgroundLocationPermission(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            }, onDismiss = {
+                                event(MappingUiEvent.BackgroundLocationPermissionDialog(visibility = false))
+                            })
                     }
 
                     if (uiState.prominentPhoneCallDialogVisible) {
 
                         AccessPhoneCallDialog(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
                             onDismissRequest = {
                                 event(MappingUiEvent.DismissProminentPhoneCallDialog)
                             },
@@ -485,37 +517,63 @@ fun MappingScreenContent(
 
                     if (uiState.prominentGalleryDialogVisible) {
 
-                        AccessGalleryDialog(onDismissRequest = {
-                            event(MappingUiEvent.DismissProminentGalleryDialog)
-                        }, onDeny = {
-                            event(MappingUiEvent.DismissProminentGalleryDialog)
-                        }, onAllow = {
-                            event(MappingUiEvent.DismissProminentGalleryDialog)
-                            event(MappingUiEvent.AllowProminentGalleryDialog)
-                        })
+                        AccessGalleryDialog(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            }, onDismissRequest = {
+                                event(MappingUiEvent.DismissProminentGalleryDialog)
+                            }, onDeny = {
+                                event(MappingUiEvent.DismissProminentGalleryDialog)
+                            }, onAllow = {
+                                event(MappingUiEvent.DismissProminentGalleryDialog)
+                                event(MappingUiEvent.AllowProminentGalleryDialog)
+                            })
                     }
+
+
 
                     if (uiState.prominentCameraDialogVisible) {
 
-                        AccessCameraDialog(onDismissRequest = {
-                            event(MappingUiEvent.DismissProminentCameraDialog)
-                        }, onDeny = {
-                            event(MappingUiEvent.DismissProminentCameraDialog)
-                        }, onAllow = {
-                            event(MappingUiEvent.DismissProminentCameraDialog)
-                            event(MappingUiEvent.AllowProminentCameraDialog)
-                        })
+                        AccessCameraDialog(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            }, onDismissRequest = {
+                                event(MappingUiEvent.DismissProminentCameraDialog)
+                            }, onDeny = {
+                                event(MappingUiEvent.DismissProminentCameraDialog)
+                            }, onAllow = {
+                                event(MappingUiEvent.DismissProminentCameraDialog)
+                                event(MappingUiEvent.AllowProminentCameraDialog)
+                            })
                     }
 
                     if (uiState.prominentLocationDialogVisible) {
 
                         AccessLocationDialog(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
                             onDismissRequest = {
                                 event(MappingUiEvent.DismissProminentLocationDialog)
                             },
                             onDeny = {
                                 event(MappingUiEvent.DismissProminentLocationDialog)
-                                     },
+                            },
                             onAllow = {
                                 event(MappingUiEvent.DismissProminentLocationDialog)
                                 event(MappingUiEvent.AllowProminentLocationDialog)
@@ -526,6 +584,14 @@ fun MappingScreenContent(
                     if (uiState.prominentNotificationDialogVisible) {
 
                         AccessNotificationDialog(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
                             onDismissRequest = {
                                 event(MappingUiEvent.DismissProminentNotificationDialog)
                             },
@@ -553,9 +619,9 @@ fun MappingScreenContent(
                         )
                     }
 
-                    if(uiState.cameraPermissionDialogVisible){
+                    if (uiState.cameraPermissionDialogVisible) {
                         DialogCameraPermission(
-                            modifier = Modifier.constrainAs(dialog){
+                            modifier = Modifier.constrainAs(dialog) {
                                 end.linkTo(parent.end)
                                 start.linkTo(parent.start)
                                 bottom.linkTo(parent.bottom)
@@ -588,7 +654,7 @@ fun MappingScreenContent(
                     }
 
 
-                    if(uiState.accessPhotoDialogVisible){
+                    if (uiState.accessPhotoDialogVisible) {
                         AccessPhotoDialog(
                             modifier = Modifier.constrainAs(dialog) {
                                 end.linkTo(parent.end)
@@ -609,7 +675,7 @@ fun MappingScreenContent(
                         )
                     }
 
-                    if(uiState.alertDialogState.visible()){
+                    if (uiState.alertDialogState.visible()) {
                         AlertDialog(
                             alertDialog = uiState.alertDialogState,
                             modifier = Modifier.constrainAs(dialog) {
@@ -643,7 +709,7 @@ fun MappingScreenContent(
 
 
 
-                    if(uiState.requestAcceptedVisible){
+                    if (uiState.requestAcceptedVisible) {
 
                         MappingRequestAccepted(
                             modifier = Modifier.fillMaxSize(),
@@ -656,7 +722,7 @@ fun MappingScreenContent(
 
                     val rescueTransaction = state.rescueTransaction
 
-                    if(uiState.requestCancelledVisible && rescueTransaction != null){
+                    if (uiState.requestCancelledVisible && rescueTransaction != null) {
 
                         MappingRequestCancelled(
                             modifier = Modifier.fillMaxSize(),
@@ -673,8 +739,6 @@ fun MappingScreenContent(
 
                 }
             }
-
-
 
 
         }
