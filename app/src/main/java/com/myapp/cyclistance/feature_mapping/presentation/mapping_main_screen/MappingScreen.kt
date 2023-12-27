@@ -433,11 +433,10 @@ fun MappingScreen(
     }
 
 
-    val zoomUserLocation = remember(state.userLocation){{
+    val zoomUserLocation = remember(key1 = state.userLocation){{
 
         if (!context.hasGPSConnection()) {
-            context.checkLocationSetting(
-                onDisabled = settingResultRequest::launch)
+            context.checkLocationSetting(onDisabled = settingResultRequest::launch, onEnabled = context::startBackgroundLocationService)
         }
 
 
@@ -454,15 +453,27 @@ fun MappingScreen(
     }}
 
 
-    val onLocateUser = remember(uiState.routeDirection, mapboxMap) {{
+    fun onLocateUser() {
 
-        if (foregroundLocationPermissionsState.allPermissionsGranted) {
-            zoomUserLocation()
-        } else {
+        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
             uiState = uiState.copy(prominentLocationDialogVisible = true)
+            return
         }
 
-    }}
+        if (Build.VERSION.SDK_INT >= Q) {
+
+            if (!backgroundLocationPermissionState.hasPermission) {
+                uiState = uiState.copy(prominentLocationDialogVisible = true)
+                return
+            }
+            context.startBackgroundLocationService()
+            zoomUserLocation()
+            return
+
+        }
+        context.startBackgroundLocationService()
+        zoomUserLocation()
+    }
 
     val changeCameraMode = remember(mapboxMap) {
         { mode: Int ->
