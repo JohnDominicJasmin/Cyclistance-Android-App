@@ -17,7 +17,7 @@ fun Context.openAppSettings() {
     })
 }
 
-fun Context.startLocationServiceIntentAction(intentAction: String = MappingConstants.ACTION_START) {
+fun Context.startBackgroundLocationService(intentAction: String = MappingConstants.ACTION_START) {
     Intent(this, LocationService::class.java).apply {
         action = intentAction
         startService(this)
