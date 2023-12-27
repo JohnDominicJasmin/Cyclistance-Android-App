@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION_CODES.Q
 import android.provider.MediaStore
 import android.view.WindowManager
 import android.widget.Toast
@@ -291,7 +292,7 @@ fun MappingScreen(
             return
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Q) {
 
             if (!backgroundLocationPermissionState.hasPermission) {
                 uiState = uiState.copy(prominentLocationDialogVisible = true)
@@ -334,7 +335,7 @@ fun MappingScreen(
             return
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Q) {
 
             if (!backgroundLocationPermissionState.hasPermission) {
                 uiState = uiState.copy(prominentLocationDialogVisible = true)
@@ -432,7 +433,8 @@ fun MappingScreen(
     }
 
 
-    val zoomUserLocation = remember{{
+    val zoomUserLocation = remember(state.userLocation){{
+
         if (!context.hasGPSConnection()) {
             context.checkLocationSetting(
                 onDisabled = settingResultRequest::launch)
@@ -1320,7 +1322,7 @@ fun MappingScreen(
     }}
 
     val allowProminentLocationDialog = remember{{
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Q) {
 
             foregroundLocationPermissionsState.requestPermission(onGranted = {
                 requestBackgroundLocationPermission()
@@ -1859,16 +1861,16 @@ fun MappingScreen(
             return@LaunchedEffect
         }
         startHelp()
-
     }
 
 
-    LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {
-        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
+    LaunchedEffect(key1 = foregroundLocationPermissionsState.isGranted()) {
+
+        if (!foregroundLocationPermissionsState.isGranted()) {
             return@LaunchedEffect
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+        if(Build.VERSION.SDK_INT >= Q){
             requestBackgroundLocationPermission()
             return@LaunchedEffect
         }

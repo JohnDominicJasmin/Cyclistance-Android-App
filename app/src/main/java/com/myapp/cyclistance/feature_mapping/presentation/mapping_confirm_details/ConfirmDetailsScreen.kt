@@ -1,9 +1,12 @@
 package com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_details
 
 import android.Manifest
+import android.app.Activity
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +28,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
+import com.myapp.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
+import com.myapp.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
+import com.myapp.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.myapp.cyclistance.core.utils.permissions.isGranted
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.feature_mapping.domain.model.ConfirmationDetails
@@ -34,6 +40,7 @@ import com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_detail
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -158,7 +165,18 @@ fun ConfirmDetailsScreen(
         }
     }
 
-    val confirmDetails = remember{{
+    val settingResultRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            context.startLocationServiceIntentAction()
+            Timber.d("GPS Setting Request Accepted")
+            return@rememberLauncherForActivityResult
+        }
+        Timber.d("GPS Setting Request Denied")
+    }
+
+    val onConfirmDetails = remember{{
         viewModel.onEvent(
             event = ConfirmDetailsVmEvent.ConfirmDetails(
                 confirmDetailsModel = ConfirmationDetails(
@@ -168,6 +186,20 @@ fun ConfirmDetailsScreen(
                     message = message.text
                 )
             ))
+    }}
+
+
+    val confirmDetails = remember{{
+        if(!context.hasGPSConnection()){
+            context.checkLocationSetting(
+                onDisabled = settingResultRequest::launch,
+                onEnabled = {
+                    onConfirmDetails()
+                })
+        }else{
+            onConfirmDetails()
+        }
+
     }}
 
     fun onClickConfirmButton() {

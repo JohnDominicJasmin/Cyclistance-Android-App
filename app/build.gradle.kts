@@ -27,8 +27,8 @@ android {
         minSdk = 21
         targetSdk = 33
 
-        versionCode = 15
-        versionName = "1.15"
+        versionCode = 16
+        versionName = "1.16"
         multiDexEnabled = true
         namespace = "com.myapp.cyclistance"
 
