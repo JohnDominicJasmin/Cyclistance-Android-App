@@ -30,7 +30,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
 import com.myapp.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.myapp.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
-import com.myapp.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.myapp.cyclistance.core.utils.permissions.isGranted
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
 import com.myapp.cyclistance.feature_mapping.domain.model.ConfirmationDetails
@@ -169,7 +168,6 @@ fun ConfirmDetailsScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
-            context.startLocationServiceIntentAction()
             Timber.d("GPS Setting Request Accepted")
             return@rememberLauncherForActivityResult
         }

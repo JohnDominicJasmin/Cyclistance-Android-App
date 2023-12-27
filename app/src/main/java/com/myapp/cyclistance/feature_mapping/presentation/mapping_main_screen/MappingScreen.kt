@@ -58,7 +58,7 @@ import com.myapp.cyclistance.core.utils.constants.MappingConstants.SELECTION_RES
 import com.myapp.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
 import com.myapp.cyclistance.core.utils.contexts.callPhoneNumber
 import com.myapp.cyclistance.core.utils.contexts.shareLocation
-import com.myapp.cyclistance.core.utils.contexts.startLocationServiceIntentAction
+import com.myapp.cyclistance.core.utils.contexts.startBackgroundLocationService
 import com.myapp.cyclistance.core.utils.json.JsonConverter.toJson
 import com.myapp.cyclistance.core.utils.permissions.isGranted
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
@@ -155,7 +155,7 @@ fun MappingScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
-            context.startLocationServiceIntentAction()
+            context.startBackgroundLocationService()
             Timber.d("GPS Setting Request Accepted")
             return@rememberLauncherForActivityResult
         }
@@ -299,14 +299,14 @@ fun MappingScreen(
                 return
             }
 
-            context.startLocationServiceIntentAction()
+            context.startBackgroundLocationService()
             requestHelp()
 
             return
 
         }
 
-        context.startLocationServiceIntentAction()
+        context.startBackgroundLocationService()
         requestHelp()
     }
 
@@ -342,13 +342,13 @@ fun MappingScreen(
                 return
             }
 
-            context.startLocationServiceIntentAction()
+            context.startBackgroundLocationService()
             respondToHelp()
             return
 
         }
 
-        context.startLocationServiceIntentAction()
+        context.startBackgroundLocationService()
         respondToHelp()
     }
 
@@ -433,11 +433,10 @@ fun MappingScreen(
     }
 
 
-    val zoomUserLocation = remember(state.userLocation){{
+    val zoomUserLocation = remember(key1 = state.userLocation){{
 
         if (!context.hasGPSConnection()) {
-            context.checkLocationSetting(
-                onDisabled = settingResultRequest::launch)
+            context.checkLocationSetting(onDisabled = settingResultRequest::launch, onEnabled = context::startBackgroundLocationService)
         }
 
 
@@ -454,15 +453,27 @@ fun MappingScreen(
     }}
 
 
-    val onLocateUser = remember(uiState.routeDirection, mapboxMap) {{
+    fun onLocateUser() {
 
-        if (foregroundLocationPermissionsState.allPermissionsGranted) {
-            zoomUserLocation()
-        } else {
+        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
             uiState = uiState.copy(prominentLocationDialogVisible = true)
+            return
         }
 
-    }}
+        if (Build.VERSION.SDK_INT >= Q) {
+
+            if (!backgroundLocationPermissionState.hasPermission) {
+                uiState = uiState.copy(prominentLocationDialogVisible = true)
+                return
+            }
+            context.startBackgroundLocationService()
+            zoomUserLocation()
+            return
+
+        }
+        context.startBackgroundLocationService()
+        zoomUserLocation()
+    }
 
     val changeCameraMode = remember(mapboxMap) {
         { mode: Int ->
@@ -1586,7 +1597,7 @@ fun MappingScreen(
                         routeDirection = event.routeDirection,
                         generateRouteFailed = false
                     )
-                    context.startLocationServiceIntentAction(intentAction = ACTION_START_FOREGROUND)
+                    context.startBackgroundLocationService(intentAction = ACTION_START_FOREGROUND)
 
                 }
 
@@ -1752,7 +1763,7 @@ fun MappingScreen(
 
         if (route == null) {
             removeRouteDirection()
-            context.startLocationServiceIntentAction(intentAction = ACTION_STOP_FOREGROUND)
+            context.startBackgroundLocationService(intentAction = ACTION_STOP_FOREGROUND)
             return@LaunchedEffect
         }
         showRouteDirection(route.geometry)
@@ -1860,6 +1871,7 @@ fun MappingScreen(
         if(!backgroundLocationPermissionState.isGranted()){
             return@LaunchedEffect
         }
+        context.startBackgroundLocationService()
         startHelp()
     }
 
@@ -1876,10 +1888,10 @@ fun MappingScreen(
         }
 
         if (!context.hasGPSConnection()) {
-            context.checkLocationSetting(onDisabled = settingResultRequest::launch)
+            context.checkLocationSetting(onDisabled = settingResultRequest::launch, onEnabled = context::startBackgroundLocationService)
         }
 
-        context.startLocationServiceIntentAction()
+        context.startBackgroundLocationService()
 
     }
 
