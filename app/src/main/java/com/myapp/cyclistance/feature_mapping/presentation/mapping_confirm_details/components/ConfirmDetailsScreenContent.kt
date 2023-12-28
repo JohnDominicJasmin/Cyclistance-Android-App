@@ -29,7 +29,8 @@ import androidx.constraintlayout.compose.Dimension
 import com.myapp.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogBackgroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
-import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessLocationDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessBackgroundLocationDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessForegroundLocationDialog
 import com.myapp.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.myapp.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent
@@ -196,6 +197,19 @@ fun ConfirmDetailsContent(
                 }
 
 
+                if(uiState.prominentBackgroundLocationDialogVisible){
+                    AccessBackgroundLocationDialog(
+                        onDismissRequest = {
+                            event(ConfirmDetailsUiEvent.DismissProminentBackgroundLocationDialog)
+                        }, onDeny = {
+                            event(ConfirmDetailsUiEvent.DismissProminentBackgroundLocationDialog)
+                        }, onAllow = {
+                            event(ConfirmDetailsUiEvent.DismissProminentBackgroundLocationDialog)
+                            event(ConfirmDetailsUiEvent.AllowProminentBackgroundLocationDialog)
+                        }
+                    )
+                }
+
 
                 if (uiState.backgroundLocationPermissionDialogVisible) {
                     DialogBackgroundLocationPermission(
@@ -238,14 +252,14 @@ fun ConfirmDetailsContent(
                     )
                 }
 
-                if(uiState.prominentLocationDialogVisible){
-                    AccessLocationDialog(onDismissRequest = {
-                        event(ConfirmDetailsUiEvent.DismissProminentLocationDialog)
+                if(uiState.prominentForegroundLocationDialogVisible){
+                    AccessForegroundLocationDialog(onDismissRequest = {
+                        event(ConfirmDetailsUiEvent.DismissProminentForegroundLocationDialog)
                     }, onDeny = {
-                        event(ConfirmDetailsUiEvent.DismissProminentLocationDialog)
+                        event(ConfirmDetailsUiEvent.DismissProminentForegroundLocationDialog)
                     }, onAllow = {
-                        event(ConfirmDetailsUiEvent.DismissProminentLocationDialog)
-                        event(ConfirmDetailsUiEvent.AllowProminentLocationDialog)
+                        event(ConfirmDetailsUiEvent.DismissProminentForegroundLocationDialog)
+                        event(ConfirmDetailsUiEvent.AllowProminentForegroundLocationDialog)
                     })
                 }
 

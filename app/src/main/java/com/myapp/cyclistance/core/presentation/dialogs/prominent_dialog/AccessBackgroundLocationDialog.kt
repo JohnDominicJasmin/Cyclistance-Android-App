@@ -10,35 +10,35 @@ import com.myapp.cyclistance.navigation.IsDarkTheme
 import com.myapp.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun AccessCameraDialog(
+fun AccessBackgroundLocationDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onDeny: () -> Unit,
     onAllow: () -> Unit) {
-
     val isDarkTheme = IsDarkTheme.current
     val icon = remember(isDarkTheme) {
-        if (isDarkTheme) R.drawable.ic_access_camera_dark else R.drawable.ic_access_camera_light
+        if (isDarkTheme) R.drawable.ic_prom_bg_location_dark else R.drawable.ic_prom_bg_location_light
     }
+
 
     ProminentDialogCreator(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
-        title = "Access your Camera",
-        description = "Cyclistance requests access to your camera to capture photos and share them with others for seamless communication. ",
+        title = "Background Location Needed",
+        description = "Cyclistance collects location data to enable “Request help”, “Respond to help”, & “Accepting help request” even when the app is closed or not in use.",
         icon = icon,
-        warningText = "Tap 'Allow' to enable this feature, as denying access may disrupt the app's functionality.",
+        warningText = "Tap 'Allow all the time' to authorize access, as declining may impact the app's ability to track progress when it's in the background.",
         onDeny = onDeny,
         onAllow = onAllow)
-
 }
+
 
 @Preview
 @Composable
-fun PreviewAccessCameraDialog() {
-    CompositionLocalProvider(IsDarkTheme provides false) {
-        CyclistanceTheme(darkTheme = false) {
-            AccessCameraDialog(
+fun PreviewAccessBackgroundLocationDialog() {
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(darkTheme = true) {
+            AccessBackgroundLocationDialog(
                 modifier = Modifier,
                 onDismissRequest = {
 
