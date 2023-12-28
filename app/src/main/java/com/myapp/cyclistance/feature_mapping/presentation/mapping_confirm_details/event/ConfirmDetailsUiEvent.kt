@@ -12,7 +12,9 @@ sealed class ConfirmDetailsUiEvent {
     data object DismissNoInternetDialog : ConfirmDetailsUiEvent()
     data object DismissBackgroundLocationDialog : ConfirmDetailsUiEvent()
     data object DismissForegroundLocationDialog : ConfirmDetailsUiEvent()
-    data object DismissProminentLocationDialog : ConfirmDetailsUiEvent()
-    data object AllowProminentLocationDialog : ConfirmDetailsUiEvent()
+    data object DismissProminentForegroundLocationDialog : ConfirmDetailsUiEvent()
+    data object DismissProminentBackgroundLocationDialog : ConfirmDetailsUiEvent()
+    data object AllowProminentForegroundLocationDialog : ConfirmDetailsUiEvent()
+    data object AllowProminentBackgroundLocationDialog : ConfirmDetailsUiEvent()
 
 }

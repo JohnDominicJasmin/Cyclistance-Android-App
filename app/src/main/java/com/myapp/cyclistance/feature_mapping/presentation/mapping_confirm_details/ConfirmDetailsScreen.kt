@@ -205,7 +205,7 @@ fun ConfirmDetailsScreen(
 
         if(!foregroundLocationPermissionsState.allPermissionsGranted){
             uiState = uiState.copy(
-                prominentLocationDialogVisible = true)
+                prominentForegroundLocationDialogVisible = true)
             return
         }
 
@@ -213,7 +213,7 @@ fun ConfirmDetailsScreen(
 
             if(!backgroundLocationPermissionState.hasPermission){
                 uiState = uiState.copy(
-                    prominentLocationDialogVisible = true)
+                    prominentBackgroundLocationDialogVisible = true)
                 return
             }
 
@@ -248,13 +248,19 @@ fun ConfirmDetailsScreen(
         }
     }
 
-    val dismissProminentLocationDialog = remember {
+    val dismissProminentForegroundLocationDialog = remember {
         {
             uiState = uiState.copy(
-                prominentLocationDialogVisible = false
+                prominentForegroundLocationDialogVisible = false
             )
         }
     }
+
+    val dismissProminentBackgroundLocationDialog = remember{{
+        uiState = uiState.copy(
+            prominentBackgroundLocationDialogVisible = false
+        )
+    }}
 
 
 
@@ -268,12 +274,17 @@ fun ConfirmDetailsScreen(
 
     }}
 
-    val allowProminentLocationDialog = remember {
+    val allowProminentForegroundLocationDialog = remember {
         {
             if (Build.VERSION.SDK_INT >= Q) {
 
                 foregroundLocationPermissionsState.requestPermission(onGranted = {
-                    requestBackgroundLocationPermission()
+
+                    if(backgroundLocationPermissionState.hasPermission){
+                        confirmDetails()
+                        return@requestPermission
+                    }
+                    uiState = uiState.copy(prominentBackgroundLocationDialogVisible = true)
                 }, onDenied = {
                     uiState = uiState.copy(
                         foregroundLocationPermissionDialogVisible = true)
@@ -303,7 +314,6 @@ fun ConfirmDetailsScreen(
         if(Build.VERSION.SDK_INT >= Q){
             requestBackgroundLocationPermission()
             return@LaunchedEffect
-
         }
         confirmDetails()
     }
@@ -335,8 +345,10 @@ fun ConfirmDetailsScreen(
                 is ConfirmDetailsUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
                 is ConfirmDetailsUiEvent.DismissBackgroundLocationDialog -> dismissBackgroundLocationDialog()
                 is ConfirmDetailsUiEvent.DismissForegroundLocationDialog -> dismissForegroundLocationDialog()
-                ConfirmDetailsUiEvent.AllowProminentLocationDialog -> allowProminentLocationDialog()
-                ConfirmDetailsUiEvent.DismissProminentLocationDialog -> dismissProminentLocationDialog()
+                ConfirmDetailsUiEvent.DismissProminentForegroundLocationDialog -> dismissProminentForegroundLocationDialog()
+                ConfirmDetailsUiEvent.AllowProminentForegroundLocationDialog -> allowProminentForegroundLocationDialog()
+                ConfirmDetailsUiEvent.DismissProminentBackgroundLocationDialog -> dismissProminentBackgroundLocationDialog()
+                ConfirmDetailsUiEvent.AllowProminentBackgroundLocationDialog -> requestBackgroundLocationPermission()
             }
         }
     )

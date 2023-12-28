@@ -1,6 +1,7 @@
 package com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,18 +36,20 @@ fun AccessCameraDialog(
 @Preview
 @Composable
 fun PreviewAccessCameraDialog() {
-    CyclistanceTheme(darkTheme = false) {
-        AccessCameraDialog(
-            modifier = Modifier,
-            onDismissRequest = {
+    CompositionLocalProvider(IsDarkTheme provides false) {
+        CyclistanceTheme(darkTheme = false) {
+            AccessCameraDialog(
+                modifier = Modifier,
+                onDismissRequest = {
 
-            },
-            onDeny = {
+                },
+                onDeny = {
 
-            },
-            onAllow = {
+                },
+                onAllow = {
 
-            }
-        )
+                }
+            )
+        }
     }
 }

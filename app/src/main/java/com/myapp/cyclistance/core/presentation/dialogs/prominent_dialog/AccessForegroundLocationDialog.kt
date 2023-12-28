@@ -1,6 +1,7 @@
 package com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -9,7 +10,7 @@ import com.myapp.cyclistance.navigation.IsDarkTheme
 import com.myapp.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun AccessLocationDialog(
+fun AccessForegroundLocationDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onDeny: () -> Unit,
@@ -20,11 +21,12 @@ fun AccessLocationDialog(
     val icon = remember(isDarkTheme) {
         if (isDarkTheme) R.drawable.ic_access_location_dark else R.drawable.ic_access_location_light
     }
+
     ProminentDialogCreator(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
-        title = "Access your Location",
-        description = "Cyclistance App collects location information for accessing and sharing purposes, enabling you to share your current location with others even when the app is in the background or not actively in use.",
+        title = "Foreground Location Needed",
+        description = "Cyclistance enhances your experience by using your current location for precise navigation and social connectivity. Grant foreground location access to enjoy seamless features.",
         icon = icon,
         warningText = "Tap 'Allow' to authorize access, as refusal may affect the app's capability to accurately display your location on the map.",
         onDeny = onDeny,
@@ -34,18 +36,20 @@ fun AccessLocationDialog(
 @Preview
 @Composable
 fun PreviewAccessLocationDialog() {
-    CyclistanceTheme(darkTheme = false) {
-        AccessLocationDialog(
-            modifier = Modifier,
-            onDismissRequest = {
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(darkTheme = true) {
+            AccessForegroundLocationDialog(
+                modifier = Modifier,
+                onDismissRequest = {
 
-            },
-            onDeny = {
+                },
+                onDeny = {
 
-            },
-            onAllow = {
+                },
+                onAllow = {
 
-            }
-        )
+                }
+            )
+        }
     }
 }

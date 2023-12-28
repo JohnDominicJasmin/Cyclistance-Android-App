@@ -39,8 +39,8 @@ import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.Dialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
 import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessCameraDialog
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessForegroundLocationDialog
 import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessGalleryDialog
-import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessLocationDialog
 import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessNotificationDialog
 import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessPhoneCallDialog
 import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
@@ -559,7 +559,7 @@ fun MappingScreenContent(
 
                     if (uiState.prominentLocationDialogVisible) {
 
-                        AccessLocationDialog(
+                        AccessForegroundLocationDialog(
                             modifier = Modifier.constrainAs(
                                 dialog) {
                                 end.linkTo(parent.end)
