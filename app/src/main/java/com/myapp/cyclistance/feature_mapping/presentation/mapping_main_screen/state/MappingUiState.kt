@@ -58,7 +58,8 @@ data class MappingUiState(
     val prominentGalleryDialogVisible: Boolean = false,
     val prominentCameraDialogVisible: Boolean = false,
     val prominentPhoneCallDialogVisible: Boolean = false,
-    val prominentLocationDialogVisible: Boolean = false
+    val prominentForegroundLocationDialogVisible: Boolean = false,
+    val prominentBackgroundLocationDialogVisible: Boolean = false,
 
 
 

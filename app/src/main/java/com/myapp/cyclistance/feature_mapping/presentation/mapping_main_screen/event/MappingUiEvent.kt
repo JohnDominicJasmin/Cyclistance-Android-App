@@ -58,13 +58,15 @@ sealed class MappingUiEvent {
     data object DismissProminentGalleryDialog : MappingUiEvent()
     data object DismissProminentCameraDialog : MappingUiEvent()
     data object DismissProminentPhoneCallDialog : MappingUiEvent()
-    data object DismissProminentLocationDialog : MappingUiEvent()
+    data object DismissProminentForegroundLocationDialog : MappingUiEvent()
+    data object DismissProminentBackgroundLocationDialog : MappingUiEvent()
 
     data object AllowProminentNotificationDialog : MappingUiEvent()
     data object AllowProminentGalleryDialog : MappingUiEvent()
     data object AllowProminentCameraDialog : MappingUiEvent()
     data object AllowProminentPhoneCallDialog : MappingUiEvent()
-    data object AllowProminentLocationDialog : MappingUiEvent()
+    data object AllowProminentForegroundLocationDialog : MappingUiEvent()
+    data object AllowProminentBackgroundLocationDialog : MappingUiEvent()
 
     data class  MapTypeBottomSheet(val visibility: Boolean) : MappingUiEvent()
 

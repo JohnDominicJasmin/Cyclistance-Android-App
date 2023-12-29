@@ -38,6 +38,7 @@ import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.Dialog
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
+import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessBackgroundLocationDialog
 import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessCameraDialog
 import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessForegroundLocationDialog
 import com.myapp.cyclistance.core.presentation.dialogs.prominent_dialog.AccessGalleryDialog
@@ -384,6 +385,29 @@ fun MappingScreenContent(
                     }
 
 
+                    if(uiState.prominentBackgroundLocationDialogVisible){
+                        AccessBackgroundLocationDialog(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismissRequest = {
+                                event(MappingUiEvent.DismissProminentBackgroundLocationDialog)
+                            },
+                            onDeny = {
+                                event(MappingUiEvent.DismissProminentBackgroundLocationDialog)
+                            },
+                            onAllow = {
+                                event(MappingUiEvent.DismissProminentBackgroundLocationDialog)
+                                event(MappingUiEvent.AllowProminentBackgroundLocationDialog)
+                            })
+                    }
+
+
 
                     if (uiState.isEmergencyCallDialogVisible) {
                         EmergencyCallDialog(
@@ -557,7 +581,7 @@ fun MappingScreenContent(
                             })
                     }
 
-                    if (uiState.prominentLocationDialogVisible) {
+                    if (uiState.prominentForegroundLocationDialogVisible) {
 
                         AccessForegroundLocationDialog(
                             modifier = Modifier.constrainAs(
@@ -569,14 +593,14 @@ fun MappingScreenContent(
                                 centerTo(parent)
                             },
                             onDismissRequest = {
-                                event(MappingUiEvent.DismissProminentLocationDialog)
+                                event(MappingUiEvent.DismissProminentForegroundLocationDialog)
                             },
                             onDeny = {
-                                event(MappingUiEvent.DismissProminentLocationDialog)
+                                event(MappingUiEvent.DismissProminentForegroundLocationDialog)
                             },
                             onAllow = {
-                                event(MappingUiEvent.DismissProminentLocationDialog)
-                                event(MappingUiEvent.AllowProminentLocationDialog)
+                                event(MappingUiEvent.DismissProminentForegroundLocationDialog)
+                                event(MappingUiEvent.AllowProminentForegroundLocationDialog)
                             })
 
                     }
