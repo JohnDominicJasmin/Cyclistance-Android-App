@@ -288,14 +288,14 @@ fun MappingScreen(
     fun onRequestHelp() {
 
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {
-            uiState = uiState.copy(prominentLocationDialogVisible = true)
+            uiState = uiState.copy(prominentForegroundLocationDialogVisible = true)
             return
         }
 
         if (Build.VERSION.SDK_INT >= Q) {
 
             if (!backgroundLocationPermissionState.hasPermission) {
-                uiState = uiState.copy(prominentLocationDialogVisible = true)
+                uiState = uiState.copy(prominentBackgroundLocationDialogVisible = true)
                 return
             }
 
@@ -331,14 +331,14 @@ fun MappingScreen(
 
     fun onRespondToHelp(){
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {
-            uiState = uiState.copy(prominentLocationDialogVisible = true)
+            uiState = uiState.copy(prominentForegroundLocationDialogVisible = true)
             return
         }
 
         if (Build.VERSION.SDK_INT >= Q) {
 
             if (!backgroundLocationPermissionState.hasPermission) {
-                uiState = uiState.copy(prominentLocationDialogVisible = true)
+                uiState = uiState.copy(prominentBackgroundLocationDialogVisible = true)
                 return
             }
 
@@ -456,14 +456,14 @@ fun MappingScreen(
     fun onLocateUser() {
 
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {
-            uiState = uiState.copy(prominentLocationDialogVisible = true)
+            uiState = uiState.copy(prominentForegroundLocationDialogVisible = true)
             return
         }
 
         if (Build.VERSION.SDK_INT >= Q) {
 
             if (!backgroundLocationPermissionState.hasPermission) {
-                uiState = uiState.copy(prominentLocationDialogVisible = true)
+                uiState = uiState.copy(prominentBackgroundLocationDialogVisible = true)
                 return
             }
             context.startBackgroundLocationService()
@@ -1332,11 +1332,16 @@ fun MappingScreen(
         )
     }}
 
-    val allowProminentLocationDialog = remember{{
+    val allowProminentForegroundLocationDialog = remember{{
         if (Build.VERSION.SDK_INT >= Q) {
 
             foregroundLocationPermissionsState.requestPermission(onGranted = {
-                requestBackgroundLocationPermission()
+                if (!backgroundLocationPermissionState.hasPermission) {
+                    uiState = uiState.copy(
+                        prominentBackgroundLocationDialogVisible = true)
+                    return@requestPermission
+                }
+                startHelp()
             }, onDenied = {
                 uiState = uiState.copy(
                     foregroundLocationPermissionDialogVisible = true)
@@ -1359,7 +1364,13 @@ fun MappingScreen(
 
     val dismissProminentLocationDialog = remember{{
         uiState = uiState.copy(
-            prominentLocationDialogVisible = false
+            prominentForegroundLocationDialogVisible = false
+        )
+    }}
+
+    val dismissProminentBackgroundDialog = remember{{
+        uiState = uiState.copy(
+            prominentBackgroundLocationDialogVisible = false
         )
     }}
 
@@ -1883,7 +1894,7 @@ fun MappingScreen(
         }
 
         if(Build.VERSION.SDK_INT >= Q){
-            requestBackgroundLocationPermission()
+            uiState = uiState.copy(prominentBackgroundLocationDialogVisible = true)
             return@LaunchedEffect
         }
 
@@ -2009,11 +2020,16 @@ fun MappingScreen(
                 MappingUiEvent.AllowProminentGalleryDialog -> allowProminentGalleryDialog()
                 MappingUiEvent.DismissProminentGalleryDialog -> dismissProminentGalleryDialog()
 
-                MappingUiEvent.AllowProminentLocationDialog -> allowProminentLocationDialog()
-                MappingUiEvent.DismissProminentLocationDialog -> dismissProminentLocationDialog()
 
                 MappingUiEvent.AllowProminentPhoneCallDialog -> allowProminentPhoneCallDialog()
                 MappingUiEvent.DismissProminentPhoneCallDialog -> dismissProminentPhoneCallDialog()
+
+                MappingUiEvent.AllowProminentForegroundLocationDialog -> allowProminentForegroundLocationDialog()
+                MappingUiEvent.DismissProminentForegroundLocationDialog -> dismissProminentLocationDialog()
+
+
+                MappingUiEvent.AllowProminentBackgroundLocationDialog -> requestBackgroundLocationPermission()
+                MappingUiEvent.DismissProminentBackgroundLocationDialog -> dismissProminentBackgroundDialog()
             }
         }
     )
