@@ -1688,6 +1688,7 @@ fun MappingScreen(
                 MappingEvent.ReportIncidentSuccess -> {
                     Toast.makeText(context, "Incident Reported", Toast.LENGTH_SHORT).show()
                     reportIncidentDialog(false)
+                    removeIncidentImage()
                 }
 
                 is MappingEvent.IncidentDistanceTooFar -> {
@@ -1730,6 +1731,8 @@ fun MappingScreen(
                     )
                     onDiscardMarkerChanges()
                     collapseBottomSheet()
+                    incidentDescriptionDialog(false)
+
                 }
 
                 is MappingEvent.GenerateRouteNavigationFailed -> {
