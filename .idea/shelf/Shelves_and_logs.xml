@@ -1,0 +1,24 @@
+<changelist name="Shelves_and_logs" date="1702202774892" recycled="false">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Shelves_and_logs/shelved.patch" />
+  <option name="DESCRIPTION" value="Shelves and logs" />
+  <binary>
+    <option name="BEFORE_PATH" value=".idea/shelf/Continue__Handle_Accessing_photo_from_gallery_and_camera_using_dialog/Cyclistance.apk" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value=".idea/shelf/Todo_1/Cyclistance.apk" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="app/release/app-release.aab" />
+    <option name="AFTER_PATH" value="app/release/app-release.aab" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Shelves_and_logs/app-release.aab" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="app/release/app-release.apk" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+</changelist>
