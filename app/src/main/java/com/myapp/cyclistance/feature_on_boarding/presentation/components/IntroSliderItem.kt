@@ -1,7 +1,13 @@
 package com.myapp.cyclistance.feature_on_boarding.presentation.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -15,12 +21,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.pager.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 import com.myapp.cyclistance.theme.Black440
 import com.myapp.cyclistance.theme.CyclistanceTheme
 
 
-private val introSliderItems  =
+private val introSliderItems =
     listOf(
         IntroSliderScreenItems.LiveLocation,
         IntroSliderScreenItems.HelpAndRescue,
@@ -38,7 +48,8 @@ fun IntroSliderItem(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,) {
+            verticalArrangement = Arrangement.Center,
+        ) {
 
             HorizontalPager(
                 modifier = Modifier.weight(0.7f),
@@ -46,8 +57,10 @@ fun IntroSliderItem(
                 state = pagerState) { page ->
 
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
 
                     Spacer(modifier = Modifier.weight(0.05f))
 
@@ -98,7 +111,7 @@ fun IntroSliderItem(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
+private fun PagerIndicator(pagerState: PagerState, modifier: Modifier) {
     HorizontalPagerIndicator(
         pagerState = pagerState,
         modifier = modifier,
@@ -109,6 +122,28 @@ private fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
         spacing = 7.dp,
         indicatorShape = RoundedCornerShape(15.dp)
     )
+}
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Preview
+@Composable
+private fun PreviewPagerIndicator() {
+    val pagerState = rememberPagerState(0)
+    CyclistanceTheme {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(),
+                count = introSliderItems.size,
+                state = pagerState) { page ->
+
+                PagerIndicator(
+                    pagerState = pagerState, modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp))
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalPagerApi::class)

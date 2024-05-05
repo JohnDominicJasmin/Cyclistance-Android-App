@@ -341,7 +341,7 @@ class MessagingRepositoryImpl(
     }
 
 
-    private suspend fun getMessagingToken(): String {
+    suspend fun getMessagingToken(): String {
         return suspendCancellableCoroutine { continuation ->
             firebaseMessaging.token.addOnSuccessListener { token: String ->
                 if (continuation.isActive) {

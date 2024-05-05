@@ -40,7 +40,7 @@ fun PreviewIntroSliderLight() {
         IntroSliderContent(
             modifier = Modifier
                 .background(MaterialTheme.colors.background),
-            pagerState = rememberPagerState(),
+            pagerState = rememberPagerState(1),
             onClickSkipButton = {},
             onClickNextButton = {},
             isOnLastPage = true

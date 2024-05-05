@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.ConnectivityObserver
-import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityUtil.Companion.toInternetStatusToText
+import com.myapp.cyclistance.core.network.ConnectivityObserver
+import com.myapp.cyclistance.core.network.NetworkConnectivityUtil.Companion.toInternetStatusToText
 import com.myapp.cyclistance.navigation.Screens
 import com.myapp.cyclistance.theme.Black900
 import com.myapp.cyclistance.theme.CyclistanceTheme

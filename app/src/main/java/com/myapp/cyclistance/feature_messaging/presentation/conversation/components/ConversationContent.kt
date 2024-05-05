@@ -59,12 +59,12 @@ fun ConversationContent(
     val conversationAvailable = remember(conversation.size) {
         conversation.isNotEmpty()
     }
-    val listState = rememberLazyListState()
+
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
     val scope = rememberCoroutineScope()
 
-
+    val listState = rememberLazyListState()
     val stateFirstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     var farthestVisibleItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 4 } }

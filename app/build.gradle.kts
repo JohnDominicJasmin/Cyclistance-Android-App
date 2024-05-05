@@ -4,7 +4,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 val compose_version = "1.3.1"
-val kotlin_version = "1.9.10"
+val kotlin_version = "1.9.23"
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -27,8 +27,8 @@ android {
         minSdk = 21
         targetSdk = 33
 
-        versionCode = 18
-        versionName = "1.18"
+        versionCode = 20
+        versionName = "1.20.0"
         multiDexEnabled = true
         namespace = "com.myapp.cyclistance"
 
@@ -120,6 +120,7 @@ android {
 
     }
 
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -198,7 +199,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-android-compiler:2.48")
     ksp("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
 
     val retrofit_version = "2.9.0"
@@ -318,3 +319,7 @@ dependencies {
 }
 
 apply(plugin = "com.google.gms.google-services")
+
+
+
+
