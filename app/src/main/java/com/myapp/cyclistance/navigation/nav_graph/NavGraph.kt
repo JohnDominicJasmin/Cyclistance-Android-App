@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.ConnectivityObserver
+import com.myapp.cyclistance.core.network.ConnectivityObserver
 import com.myapp.cyclistance.navigation.event.NavUiEvent
 import com.myapp.cyclistance.navigation.state.NavUiState
 

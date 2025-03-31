@@ -32,6 +32,7 @@ fun DialogWebView(modifier: Modifier, mUrl: String, onDismiss: () -> Unit) {
                 settings.setGeolocationEnabled(true)
                 settings.useWideViewPort = true
                 settings.domStorageEnabled = true
+                settings.cacheMode = android.webkit.WebSettings.LOAD_CACHE_ELSE_NETWORK
 
                 loadUrl(mUrl)
             }

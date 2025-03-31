@@ -52,3 +52,11 @@ fun Context.shareLocation(latitude: Double, longitude: Double){
     val chooserIntent = Intent.createChooser(sharingIntent, "Share your Location via")
     startActivity(chooserIntent)
 }
+
+fun Context.openEmailApp() {
+    val intent = Intent(Intent.ACTION_MAIN).apply {
+        addCategory(Intent.CATEGORY_APP_EMAIL)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    startActivity(intent)
+}

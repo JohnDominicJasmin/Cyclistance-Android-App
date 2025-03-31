@@ -1,8 +1,8 @@
 package com.myapp.cyclistance.navigation.state
 
 import android.os.Parcelable
+import com.myapp.cyclistance.core.network.ConnectivityObserver
 import com.myapp.cyclistance.core.utils.annotations.StableState
-import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.ConnectivityObserver
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

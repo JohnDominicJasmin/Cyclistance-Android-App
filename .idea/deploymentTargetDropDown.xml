@@ -2,8 +2,27 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="IntroSliderItemPreview">
+        <State />
+      </entry>
       <entry key="PreviewAccessLocationDialog">
         <State />
+      </entry>
+      <entry key="PreviewPagerIndicator">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-09T09:38:28.022476563Z" />
+        </State>
       </entry>
       <entry key="PreviewProminentDialogCreator">
         <State>
@@ -34,7 +53,7 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2023-12-30T05:21:47.728607444Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-02-23T17:20:42.050877325Z" />
           <runningDeviceTargetsSelectedWithDialog>
             <Target>
               <type value="RUNNING_DEVICE_TARGET" />

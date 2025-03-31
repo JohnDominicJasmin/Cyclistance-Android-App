@@ -29,8 +29,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.ConnectivityObserver
-import com.myapp.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityObserver
+import com.myapp.cyclistance.core.network.ConnectivityObserver
+import com.myapp.cyclistance.core.network.NetworkConnectivityObserver
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.NavigationDrawerContent
 import com.myapp.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
 import com.myapp.cyclistance.feature_settings.presentation.setting_screen.event.SettingEvent

@@ -1,6 +1,5 @@
 package com.myapp.cyclistance.feature_authentication.presentation.auth_email
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -13,12 +12,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.myapp.cyclistance.R
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
+import com.myapp.cyclistance.core.utils.contexts.openEmailApp
 import com.myapp.cyclistance.feature_authentication.presentation.auth_email.components.EmailAuthScreenContent
 import com.myapp.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthEvent
 import com.myapp.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthUiEvent
@@ -43,12 +42,7 @@ fun EmailAuthScreen(
     var uiState by rememberSaveable { mutableStateOf(EmailAuthUiState()) }
 
 
-    val intent = remember {
-        Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_APP_EMAIL)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-    }
+
 
     val onDismissAlertDialog = remember {
         {
@@ -61,7 +55,7 @@ fun EmailAuthScreen(
     val onClickVerifyButton = remember {
         {
             runCatching {
-                startActivity(context, intent, null)
+                context.openEmailApp()
             }.onFailure {
                 Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
             }
