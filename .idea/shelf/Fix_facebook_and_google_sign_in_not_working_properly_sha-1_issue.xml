@@ -1,0 +1,12 @@
+<changelist name="Fix_facebook_and_google_sign_in_not_working_properly_sha-1_issue" date="1701579425133" recycled="false">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Fix_facebook_and_google_sign_in_not_working_properly_sha-1_issue/shelved.patch" />
+  <option name="DESCRIPTION" value="Fix facebook and google sign in not working properly sha-1 issue" />
+  <binary>
+    <option name="AFTER_PATH" value="app/release/app-release.aab" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Fix_facebook_and_google_sign_in_not_working_properly_sha-1_issue/app-release.aab" />
+  </binary>
+  <binary>
+    <option name="AFTER_PATH" value="app/release/app-release.apk" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Fix_facebook_and_google_sign_in_not_working_properly_sha-1_issue/app-release.apk" />
+  </binary>
+</changelist>

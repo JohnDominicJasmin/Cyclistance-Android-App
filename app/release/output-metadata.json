@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.cyclistance",
+  "applicationId": "com.myapp.cyclistance",
   "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 1,
-      "versionName": "1.0",
+      "versionCode": 18,
+      "versionName": "1.18",
       "outputFile": "app-release.apk"
     }
   ],

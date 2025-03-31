@@ -4,7 +4,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 val compose_version = "1.3.1"
-val kotlin_version = "1.9.10"
+val kotlin_version = "1.9.23"
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -23,16 +23,16 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.cyclistance"
+        applicationId = "com.myapp.cyclistance"
         minSdk = 21
         targetSdk = 33
 
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 20
+        versionName = "1.20.0"
         multiDexEnabled = true
-        namespace = "com.example.cyclistance"
+        namespace = "com.myapp.cyclistance"
 
-        testInstrumentationRunner = "com.example.cyclistance.HiltTestRunner"
+        testInstrumentationRunner = "com.myapp.cyclistance.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -44,11 +44,11 @@ android {
 
         getByName("debug") {
             isCrunchPngs = true
+            isDebuggable = true
+            isMinifyEnabled = false
             manifestPlaceholders["cleartextTrafficPermitted"] = "true"
-            resValue(
-                "string",
-                "MapsDownloadToken",
-                localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
+
+            resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
             resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
             resValue(
                 "string",
@@ -66,10 +66,12 @@ android {
             resValue("string", "FcmServerKey", localProperties.getProperty("FCM_SERVER_KEY"))
             resValue("string", "FcmBaseUrl", localProperties.getProperty("FCM_BASE_URL"))
         }
+
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
             isCrunchPngs = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -95,6 +97,7 @@ android {
             resValue("string", "FcmServerKey", localProperties.getProperty("FCM_SERVER_KEY"))
             resValue("string", "FcmBaseUrl", localProperties.getProperty("FCM_BASE_URL"))
         }
+
     }
 
     compileOptions {
@@ -108,6 +111,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -115,6 +119,7 @@ android {
         kotlinCompilerVersion = kotlin_version
 
     }
+
 
     packagingOptions {
         resources {
@@ -194,7 +199,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-android-compiler:2.48")
     ksp("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
 
     val retrofit_version = "2.9.0"
@@ -242,7 +247,7 @@ dependencies {
 
 
     //permissions
-    implementation("com.google.accompanist:accompanist-permissions:0.31.3-beta")
+    implementation("com.google.accompanist:accompanist-permissions:0.21.1-beta")
 
     //animatedNavHost
     implementation("com.google.accompanist:accompanist-navigation-animation:0.31.4-beta")
@@ -314,3 +319,7 @@ dependencies {
 }
 
 apply(plugin = "com.google.gms.google-services")
+
+
+
+
