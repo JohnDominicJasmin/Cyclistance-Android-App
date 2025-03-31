@@ -27,6 +27,7 @@ import com.myapp.cyclistance.feature_authentication.domain.util.LocalActivityRes
 import com.myapp.cyclistance.navigation.NavScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.myapp.cyclistance.BuildConfig
 
 
 @AndroidEntryPoint
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
         Mapbox.getInstance(this, getString(R.string.MapsDownloadToken))
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setTheme(R.style.Theme_Cyclistance)
@@ -57,7 +59,7 @@ class MainActivity : ComponentActivity() {
                 NavScreen()
             }
         }
-    }
+    }   
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)

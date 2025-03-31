@@ -104,14 +104,14 @@ fun NavController.navigateScreenInclusively(
 
 }
 
-fun NavController.navigateScreen(
-    route: String) {
-    navigate(route) {
-        popUpTo(route) {
-            saveState = true
+    fun NavController.navigateScreen(
+        route: String) {
+        navigate(route) {
+            popUpTo(route) {
+                saveState = true
 
+            }
+            restoreState = true
+            launchSingleTop = true
         }
-        restoreState = true
-        launchSingleTop = true
     }
-}
